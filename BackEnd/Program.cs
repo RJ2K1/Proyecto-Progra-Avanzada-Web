@@ -21,6 +21,10 @@ builder.Services.AddScoped<IUnidadDeTrabajo, UnidadDeTrabajo>();
 builder.Services.AddScoped<IUsuariosDAL, UsuariosDALImpl>();
 builder.Services.AddScoped<IUsuariosService, UsuariosService>();
 
+builder.Services.AddScoped<IRolesDAL, RolesDALImpl>();
+builder.Services.AddScoped<IRolesService, RolesService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
