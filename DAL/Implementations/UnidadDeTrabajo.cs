@@ -9,11 +9,13 @@ namespace DAL.Implementations
         private readonly ProyectoWebContext _context;
 
         public IUsuariosDAL UsuariosDAL { get; private set; }
+        public IAuditoriaDAL AuditoriaDAL { get; private set; } 
 
-        public UnidadDeTrabajo(ProyectoWebContext context, IUsuariosDAL usuariosDAL)
+        public UnidadDeTrabajo(ProyectoWebContext context, IUsuariosDAL usuariosDAL, IAuditoriaDAL AuditoriaDAL)
         {
             _context = context;
             UsuariosDAL = usuariosDAL;
+            AuditoriaDAL = auditoriaDAL;
         }
 
         public bool Complete()
