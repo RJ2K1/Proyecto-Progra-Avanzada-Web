@@ -1,4 +1,4 @@
-using DAL.Interfaces;
+﻿using DAL.Interfaces;
 using Entities.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,5 +9,6 @@ namespace DAL.Implementations
         public RolesDALImpl(ProyectoWebContext context) : base(context)
         {
         }
+
     }
 }
