@@ -1,13 +1,10 @@
 using DAL.Interfaces;
 using Entities.Entities;
-using Microsoft.EntityFrameworkCore;
 
-namespace DAL.Implementations
+namespace DAL.Interfaces
 {
-    public class RolesDALImpl : DALGenericoImpl<Roles>, IRolesDAL
+    public interface IRolesDAL : IDALGenerico<Roles>
     {
-        public RolesDALImpl(ProyectoWebContext context) : base(context)
-        {
-        }
+
     }
 }
