@@ -1,23 +1,24 @@
 using DAL.Interfaces;
 using Entities.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DAL.Implementations
 {
     public class AuditoriaDALImpl : DALGenericoImpl<Auditoria>, IAuditoriaDAL
     {
+        private readonly ProyectoWebContext _context;
+
         public AuditoriaDALImpl(ProyectoWebContext context) : base(context)
         {
+            _context = context;
         }
 
-        public async Task<IEnumerable<Auditoria>> GetAuditoriaByCriteriaAsync(Expression<Func<Auditoria, bool>> criteria)
+
+        public async Task<List<Auditoria>> GetAuditoriasConUsuario()
         {
-            return await _Context.Set<Auditoria>().Where(criteria).ToListAsync();
+            return await _context.Auditoria.Include(a => a.Usuario).ToListAsync();
         }
     }
 }

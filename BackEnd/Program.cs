@@ -24,6 +24,9 @@ builder.Services.AddScoped<IUsuariosService, UsuariosService>();
 builder.Services.AddScoped<IRolesDAL, RolesDALImpl>();
 builder.Services.AddScoped<IRolesService, RolesService>();
 
+// Agregar las implementaciones de DAL y Servicio de Auditoria.
+builder.Services.AddScoped<IAuditoriaDAL, AuditoriaDALImpl>();
+builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
 
 var app = builder.Build();
 
