@@ -1,4 +1,3 @@
-// AuditoriaService.cs
 using BackEnd.Models;
 using BackEnd.Services.Interfaces;
 using DAL.Interfaces;
@@ -18,13 +17,39 @@ namespace BackEnd.Services.Implementations
             _unidadDeTrabajo = unidadDeTrabajo;
         }
 
-        public async Task<List<AuditoriaModel>> GetAuditorias()
+        public async Task<bool> Add(AuditoriaModel auditoriaModel)
         {
-            var auditoriasEntity = await _unidadDeTrabajo.AuditoriaDAL.GetAllAsync();
-            return auditoriasEntity.Select(a => Convertir(a)).ToList();
+            var auditoria = ConvertirAEntidad(auditoriaModel);
+            await _unidadDeTrabajo.AuditoriaDAL.AddAsync(auditoria);
+            return _unidadDeTrabajo.Complete();
         }
 
-        private AuditoriaModel Convertir(Auditoria auditoria)
+        public async Task<bool> Delete(int id)
+        {
+            await _unidadDeTrabajo.AuditoriaDAL.RemoveAsync(new Auditoria { Id = id });
+            return _unidadDeTrabajo.Complete();
+        }
+
+        public async Task<AuditoriaModel> GetById(int id)
+        {
+            var auditoria = await _unidadDeTrabajo.AuditoriaDAL.GetAsync(id);
+            return auditoria != null ? ConvertirAModelo(auditoria) : null;
+        }
+
+        public async Task<List<AuditoriaModel>> GetAuditorias()
+        {
+            var auditorias = await _unidadDeTrabajo.AuditoriaDAL.GetAuditoriasConUsuario();
+            return auditorias.Select(a => ConvertirAModelo(a)).ToList();
+        }
+
+        public async Task<bool> Update(AuditoriaModel auditoriaModel)
+        {
+            var auditoria = ConvertirAEntidad(auditoriaModel);
+            await _unidadDeTrabajo.AuditoriaDAL.UpdateAsync(auditoria);
+            return _unidadDeTrabajo.Complete();
+        }
+
+        private AuditoriaModel ConvertirAModelo(Auditoria auditoria)
         {
             return new AuditoriaModel
             {
@@ -33,8 +58,21 @@ namespace BackEnd.Services.Implementations
                 RegistroId = auditoria.RegistroId,
                 Accion = auditoria.Accion,
                 UsuarioId = auditoria.UsuarioId,
-                NombreUsuario = auditoria.Usuario.Nombre,  // Aquí asumimos que la entidad Usuario ya está cargada.
+                NombreUsuario = auditoria.Usuario?.Nombre ?? "Nombre no disponible",
                 FechaAccion = auditoria.FechaAccion
+            };
+        }
+
+        private Auditoria ConvertirAEntidad(AuditoriaModel auditoriaModel)
+        {
+            return new Auditoria
+            {
+                Id = auditoriaModel.Id,
+                TablaAfectada = auditoriaModel.TablaAfectada,
+                RegistroId = auditoriaModel.RegistroId,
+                Accion = auditoriaModel.Accion,
+                UsuarioId = auditoriaModel.UsuarioId,
+                FechaAccion = auditoriaModel.FechaAccion
             };
         }
     }

@@ -9,25 +9,32 @@ namespace DAL.Implementations
         private readonly ProyectoWebContext _context;
 
         public IUsuariosDAL UsuariosDAL { get; private set; }
+        public IRolesDAL RolesDAL { get; private set; }
         public IAuditoriaDAL AuditoriaDAL { get; private set; } 
 
-        public UnidadDeTrabajo(ProyectoWebContext context, IUsuariosDAL usuariosDAL, IAuditoriaDAL AuditoriaDAL)
+        public UnidadDeTrabajo(
+            ProyectoWebContext context,
+            IUsuariosDAL usuariosDAL,
+            IRolesDAL rolesDAL,
+            IAuditoriaDAL auditoriaDAL) 
         {
             _context = context;
             UsuariosDAL = usuariosDAL;
-            AuditoriaDAL = auditoriaDAL;
+            RolesDAL = rolesDAL;
+            AuditoriaDAL = auditoriaDAL; 
         }
 
         public bool Complete()
         {
             try
             {
-                _context.SaveChanges();
-                return true;
+;
+
+                return _context.SaveChanges() > 0;
             }
             catch (Exception)
             {
-               //Manejo de excepciones
+
                 return false;
             }
         }

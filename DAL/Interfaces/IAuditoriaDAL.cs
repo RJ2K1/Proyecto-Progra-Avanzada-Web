@@ -8,6 +8,8 @@ namespace DAL.Interfaces
 {
     public interface IAuditoriaDAL : IDALGenerico<Auditoria>
     {
-        Task<IEnumerable<Auditoria>> GetAuditoriaByCriteriaAsync(Expression<Func<Auditoria, bool>> criteria);
+
+         Task<List<Auditoria>> GetAuditoriasConUsuario();
+
     }
 }
