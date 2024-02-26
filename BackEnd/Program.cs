@@ -20,13 +20,14 @@ builder.Services.AddDbContext<ProyectoWebContext>(options =>
 builder.Services.AddScoped<IUnidadDeTrabajo, UnidadDeTrabajo>();
 builder.Services.AddScoped<IUsuariosDAL, UsuariosDALImpl>();
 builder.Services.AddScoped<IUsuariosService, UsuariosService>();
-
 builder.Services.AddScoped<IRolesDAL, RolesDALImpl>();
 builder.Services.AddScoped<IRolesService, RolesService>();
-
-// Agregar las implementaciones de DAL y Servicio de Auditoria.
 builder.Services.AddScoped<IAuditoriaDAL, AuditoriaDALImpl>();
 builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+
+// Agrega las implementaciones de DAL y Servicio para Departamentos.
+builder.Services.AddScoped<IDepartamentosDAL, DepartamentosDALImpl>();
+builder.Services.AddScoped<IDepartamentosService, DepartamentosService>();
 
 var app = builder.Build();
 
