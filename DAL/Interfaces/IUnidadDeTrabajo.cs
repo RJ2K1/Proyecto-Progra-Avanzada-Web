@@ -6,6 +6,7 @@ namespace DAL.Interfaces
     {
         IUsuariosDAL UsuariosDAL { get; }
         IRolesDAL RolesDAL { get; }
+        IDepartamentosDAL DepartamentosDAL { get; }
         bool Complete();
     }
 }
