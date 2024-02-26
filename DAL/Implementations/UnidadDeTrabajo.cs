@@ -10,12 +10,15 @@ namespace DAL.Implementations
 
         public IUsuariosDAL UsuariosDAL { get; private set; }
         public IAuditoriaDAL AuditoriaDAL { get; private set; } 
+        
+        public ITicketsDAL _ticketsDAL { get;}
 
-        public UnidadDeTrabajo(ProyectoWebContext context, IUsuariosDAL usuariosDAL, IAuditoriaDAL AuditoriaDAL)
+        public UnidadDeTrabajo(ProyectoWebContext context, IUsuariosDAL usuariosDAL, IAuditoriaDAL AuditoriaDAL, ITicketsDAL ticketsDAL)
         {
             _context = context;
             UsuariosDAL = usuariosDAL;
             AuditoriaDAL = auditoriaDAL;
+            _ticketsDAL = ticketsDAL;
         }
 
         public bool Complete()

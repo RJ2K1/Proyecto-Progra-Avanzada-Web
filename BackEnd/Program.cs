@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 // cadena de conexión de la base de datos.
 builder.Services.AddDbContext<ProyectoWebContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+#region DI
 // implementaciones de DAL y Servicios al contenedor de inyección de dependencias.
 builder.Services.AddScoped<IUnidadDeTrabajo, UnidadDeTrabajo>();
 builder.Services.AddScoped<IUsuariosDAL, UsuariosDALImpl>();
@@ -23,6 +23,10 @@ builder.Services.AddScoped<IUsuariosService, UsuariosService>();
 
 builder.Services.AddScoped<IRolesDAL, RolesDALImpl>();
 builder.Services.AddScoped<IRolesService, RolesService>();
+
+builder.Services.AddScoped<ITicketsDAL, TicketsDALImpl>();
+builder.Services.AddScoped<ITicketsService, TicketsService>();
+#endregion
 
 
 var app = builder.Build();
