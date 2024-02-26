@@ -8,22 +8,21 @@ namespace DAL.Implementations
     {
         private readonly ProyectoWebContext _context;
 
-      
         public IUsuariosDAL UsuariosDAL { get; private set; }
-        public IAuditoriaDAL AuditoriaDAL { get; private set; }
         public IRolesDAL RolesDAL { get; private set; }
+        public ITicketsDAL _ticketsDAL { get; private set; } 
         public IDepartamentosDAL DepartamentosDAL { get; private set; }
-        public ITicketsDAL TicketsDAL { get; private set; }
+        public IAuditoriaDAL AuditoriaDAL { get; private set; }
 
-       
-        public UnidadDeTrabajo(ProyectoWebContext context, IUsuariosDAL usuariosDAL, IAuditoriaDAL auditoriaDAL, IRolesDAL rolesDAL, IDepartamentosDAL departamentosDAL, ITicketsDAL ticketsDAL)
+      
+        public UnidadDeTrabajo(ProyectoWebContext context, IUsuariosDAL usuariosDAL, IRolesDAL rolesDAL, ITicketsDAL ticketsDAL, IDepartamentosDAL departamentosDAL, IAuditoriaDAL auditoriaDAL)
         {
             _context = context;
             UsuariosDAL = usuariosDAL;
-            AuditoriaDAL = auditoriaDAL;
             RolesDAL = rolesDAL;
+            _ticketsDAL = ticketsDAL;
             DepartamentosDAL = departamentosDAL;
-            TicketsDAL = ticketsDAL;
+            AuditoriaDAL = auditoriaDAL;
         }
 
         public bool Complete()
@@ -40,7 +39,7 @@ namespace DAL.Implementations
 
         public void Dispose()
         {
-            _context.Dispose();
+      
         }
     }
 }
