@@ -3,6 +3,7 @@ using BackEnd.Services.Interfaces;
 using DAL.Implementations;
 using DAL.Interfaces;
 using Entities.Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,15 @@ builder.Services.AddSwaggerGen();
 // Configuración de la cadena de conexión de la base de datos.
 builder.Services.AddDbContext<ProyectoWebContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Configuración de autenticación basada en cookies.
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login"; // Ruta al controlador de inicio de sesión.
+        options.LogoutPath = "/Account/Logout"; // Ruta al controlador de cierre de sesión.
+        // Configura otras opciones según sea necesario.
+    });
 
 #region DI
 // Registro de implementaciones de DAL y Servicios en el contenedor de inyección de dependencias.
@@ -49,6 +59,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication(); // Importante: Esto habilita la autenticación en tu aplicación.
 app.UseAuthorization();
 
 app.MapControllers();
