@@ -12,6 +12,6 @@ namespace FrontEnd.Models
         [Required(ErrorMessage = "El campo Contraseña es obligatorio.")]
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña")]
-        public string Contrasena { get; set; }
+        public string Password { get; set; }
     }
 }

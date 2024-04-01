@@ -25,15 +25,53 @@
                     <div class="container">
                         <nav>
                             <ul>
-                                <li><a href="index.html">HOME</a></li>
-                                <li><a href="#">LAYOUT</a></li>
-                                <li><a href="#">FEATURES</a></li>
-                                <li><a href="#">ELEMENTS</a></li>
-                                <li><a href="#">PAGES</a></li>
-                                <li><a href="#">PORTFOLIO</a></li>
-                                <li><a href="#">BLOG</a></li>
-                                <li><a href="#">SHOP</a></li>
+                                <!-- HOME: Visible para todos los usuarios -->
+                                <li><a href="/">HOME</a></li>
+
+                                <!-- Dashboard: Solo visible para Soporte y Administrador -->
+                                @if (User.IsInRole("Soporte") || User.IsInRole("Administrador"))
+                                {
+                                    <li><a href="/dashboard">DASHBOARD</a></li>
+                                }
+
+                                <!-- Crear Ticket: Visible para todos los usuarios autenticados -->
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li><a href="/tickets/crear">CREAR TICKET</a></li>
+                                }
+
+                                <!-- Mis Tickets: Visible para todos los usuarios autenticados -->
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li><a href="/tickets/mis-tickets">MIS TICKETS</a></li>
+                                }
+
+                                <!-- Admin: Solo visible para el rol Administrador -->
+                                @if (User.IsInRole("Administrador"))
+                                {
+                                    <li><a href="/admin">ADMIN</a></li>
+                                }
+
+                                <!-- Exclusivo para Soporte -->
+                                @if (User.IsInRole("Soporte"))
+                                {
+                                    <li><a href="/soporte/exclusivo">SOPORTE EXCLUSIVO</a></li>
+                                }
+
+                                <!-- Exclusivo para Usuario Final -->
+                                @if (User.IsInRole("UsuarioFinal"))
+                                {
+                                    <li><a href="/usuariofinal/exclusivo">USUARIO FINAL EXCLUSIVO</a></li>
+                                }
+
+                                <!-- Salir: Visible para todos los usuarios autenticados -->
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li><a href="/account/logout">SALIR</a></li>
+                                }
                             </ul>
+
+
                         </nav>
                     </div>
                 </div>

@@ -1,81 +1,69 @@
-﻿
-
+﻿@model FrontEnd.Models.RegisterViewModel
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="INSPIRO" />
     <meta name="description" content="Themeforest Template Polo, html template">
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" type="image/png" href="~/images/favicon.png">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Document title -->
-    <title>POLO | The Multi-Purpose HTML5 Template</title>
-    <!-- Stylesheets & Fonts -->
-    <link href="css/plugins.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <title>Registrar Nueva Cuenta - Polo</title>
+    <link href="~/css/plugins.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
 </head>
-
 <body>
-    <!-- Body Inner -->
     <div class="body-inner">
-        <!-- Section -->
-        <section class="fullscreen" style="background-image: url(images/pages/BackGround.png)">
+        <section class="fullscreen" style="background-image: url(~/images/pages/BackGround.png)">
             <div class="container container-fullscreen">
                 <div class="text-middle">
-                    <div class="text-center m-b-30">
-                        <!-- ... logo ... -->
-                    </div>
                     <div class="row">
-                        <div class="col-lg-6 center p-40 background-white b-r-6">
-                            <form class="form-transparent-grey">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <h3>Registrar Nueva Cuenta</h3>
-                                        <p>Crea una cuenta ingresando la información a continuación. Si ya tienes una cuenta, por favor inicia sesión.</p>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <label class="sr-only">Nombre</label>
-                                        <input type="text" value="" placeholder="Nombre" class="form-control" required>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <label class="sr-only">Correo Electrónico</label>
-                                        <input type="email" value="" placeholder="Correo Electrónico" class="form-control" required>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <label class="sr-only">Contraseña</label>
-                                        <input type="password" value="" placeholder="Contraseña" class="form-control" required>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <label class="sr-only">Confirmar Contraseña</label>
-                                        <input type="password" value="" placeholder="Confirmar Contraseña" class="form-control" required>
-                                    </div>
-                                    <div class="col-lg-12 form-group">
-                                        <button class="btn" type="button">Registrar Cuenta</button>
-                                        <button type="button" class="btn btn-danger m-l-10">Cancelar</button>
-                                    </div>
+                        <div class="col-lg-10 center p-40 background-white b-r-6">
+                            <h3>Registrar Nueva Cuenta</h3>
+                            <p>Crea una cuenta ingresando la información a continuación.</p>
+
+                            <!-- Begin: Form -->
+                            <form asp-action="Register" asp-controller="Account" method="post" class="form-transparent-grey">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                <div class="form-group">
+                                    <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <input asp-for="Email" class="form-control" placeholder="Correo Electrónico" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <input asp-for="Password" class="form-control" placeholder="Contraseña" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirmar Contraseña" />
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn">Registrar Cuenta</button>
+                                    <a class="btn btn-danger m-l-10" href="@Url.Action("Login", "Account")">Cancelar</a>
                                 </div>
                             </form>
+                            <!-- End: Form -->
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- end: Section -->
     </div>
-    <!-- end: Body Inner -->
-    <!-- Scroll top -->
     <a id="scrollTop"><i class="icon-chevron-up"></i><i class="icon-chevron-up"></i></a>
-    <!--Plugins-->
     <script src="~/js/jquery.js"></script>
     <script src="~/js/plugins.js"></script>
-    <!--Template functions-->
     <script src="~/js/functions.js"></script>
-    <!-- jQuery Validate plugin files-->
     <script src="~/plugins/validate/validate.min.js"></script>
     <script src="~/plugins/validate/valildate-rules.js"></script>
 </body>
-
 </html>

@@ -1,5 +1,6 @@
 using FrontEnd.Helpers.Implementations;
 using FrontEnd.Helpers.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,22 @@ builder.Services.AddHttpClient<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IUsuarioHelper, UsuarioHelper>();
 // Registra otros helpers y servicios según sea necesario.
+// Configuración de autenticación basada en cookies.
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "MiCookieDeAutenticacion";
+        options.LoginPath = "/Account/Login"; // Ruta al controlador de inicio de sesión.
+        options.LogoutPath = "/Account/Logout"; // Ruta al controlador de cierre de sesión.
+    });
+
+//logger
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddDebug();
+});
 
 var app = builder.Build();
 
@@ -24,10 +41,15 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
+
+
+
+
 
 // Importante: el llamado a UseAuthentication debe ir antes de UseAuthorization.
 app.UseAuthentication();
