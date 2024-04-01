@@ -1,24 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using FrontEnd.Models;
+using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using FrontEnd.Helpers.Interfaces; // Asegúrate de que este namespace es correcto para IServiceRepository
-using FrontEnd.Models;
-using FrontEnd.Pages.Account;
+using System.Security.Claims;
 
 namespace FrontEnd.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IServiceRepository _serviceRepository;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly string _apiBaseUrl;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IServiceRepository serviceRepository)
+        public AccountController(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<AccountController> logger)
         {
-            _serviceRepository = serviceRepository;
+            _httpClientFactory = httpClientFactory;
+            _apiBaseUrl = configuration.GetValue<string>("BackEnd:Url");
+            _logger = logger;
         }
 
         [HttpGet]
@@ -28,42 +31,52 @@ namespace FrontEnd.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var json = JsonConvert.SerializeObject(model);
-                var response = await _serviceRepository.PostResponse("api/Account/login", json);
+                return View(model);
+            }
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(responseContent);
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
 
-                    if (loginResponse != null)
-                    {
-                        var claims = new List<Claim>
+            var response = await client.PostAsync($"{_apiBaseUrl}api/Authentication/login", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var loginResponse = JsonConvert.DeserializeObject<dynamic>(responseContent); 
+
+                var userRole = (string)loginResponse.role; 
+
+                var claims = new List<Claim>
                 {
-                    // Aquí se usa Email en lugar de NombreUsuario
-                    new Claim(ClaimTypes.Name, loginResponse.Email),
-                    new Claim(ClaimTypes.Role, loginResponse.Rol)
+                    new Claim(ClaimTypes.Name, model.Email),
+                    new Claim(ClaimTypes.Role, userRole)
                 };
 
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var authProperties = new AuthenticationProperties { /* ... */ };
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Usuario o contraseña inválidos.");
-                }
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
+                _logger.LogInformation($"Usuario {model.Email} logueado con rol {userRole}.");
+
+                return RedirectToAction("Index", "Home");
             }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Credenciales inválidas.");
+            }
+
             return View(model);
         }
+
+
 
         [HttpGet]
         public IActionResult Register()
@@ -75,35 +88,35 @@ namespace FrontEnd.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var json = JsonConvert.SerializeObject(model);
-                var response = await _serviceRepository.PostResponse("api/Account/register", json);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    // Puedes redireccionar al usuario a la pantalla de inicio de sesión o a donde sea apropiado
-                    return RedirectToAction("Login", "Account");
-                }
-                else
-                {
-                    // Aquí podrías manejar respuestas HTTP distintas de 200, como un 400 o un 500
-                    ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario.");
-                }
+                return View(model);
             }
+
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"{_apiBaseUrl}api/Authentication/register", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // El registro fue exitoso, redirige al usuario a la pantalla de inicio de sesión
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                // Algo salió mal durante el registro, muestra el error
+                ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario.");
+            }
+
             return View(model);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync("CookieAuthenticationScheme");
             return RedirectToAction("Login");
         }
-    }
-
-    public class LoginResponse
-    {
-        public string Email { get; set; }
-        public string Rol { get; set; }
     }
 }
