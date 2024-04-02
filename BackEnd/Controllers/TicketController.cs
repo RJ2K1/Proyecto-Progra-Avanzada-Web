@@ -82,5 +82,23 @@ namespace BackEnd.Controllers
                 return BadRequest();
             }
         }
+
+        public class TicketsController : Controller
+        {
+            private readonly ITicketsService _ticketsService;
+
+            public TicketsController(ITicketsService ticketsService)
+            {
+                _ticketsService = ticketsService;
+            }
+
+            // Acción para mostrar la lista de tickets
+            public async Task<IActionResult> List()
+            {
+                var tickets = await _ticketsService.GetTickts();
+                return View(tickets);
+            }
+        }
+
     }
 }
