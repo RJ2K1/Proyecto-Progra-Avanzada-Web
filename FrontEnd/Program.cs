@@ -14,6 +14,7 @@ builder.Services.AddHttpClient<IServiceRepository, ServiceRepository>();
 // Registro de dependencias para los helpers y servicios.
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IUsuarioHelper, UsuarioHelper>();
+builder.Services.AddScoped<ITicketHelper, TicketHelper>();
 // Registra otros helpers y servicios según sea necesario.
 // Configuración de autenticación basada en cookies.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
