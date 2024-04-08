@@ -12,6 +12,7 @@ namespace FrontEnd.Controllers
         public UsuarioController(IUsuarioHelper usuarioHelper)
         {
             _usuarioHelper = usuarioHelper;
+
         }
 
         // GET: Usuario

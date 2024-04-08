@@ -1,0 +1,69 @@
+﻿@model FrontEnd.Models.UsuarioViewModel
+
+@{
+    ViewData["Title"] = "Lista de Usuarios";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+
+<body>
+    <div class="body-inner">
+        <section class="fullscreen" data-bg-parallax="/images/pages/BackGround.png">
+            <div class="container container-fullscreen">
+                <div class="text-middle">
+                    <div class="row">
+                        <div class="col-lg-10 center p-40 background-white b-r-6">
+                            <h3>Modificar Usuario</h3>
+                            <p>Modifica el usuario seleccionado.</p>
+                            <form asp-action="Edit" asp-controller="Usuario" method="put" class="form-transparent-grey">
+                                <div class="form-group">
+                                    <label for="Nombre">Nombre</label>
+                                    <input type="text" asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Email">Correo Electrónico</label>
+                                    <input type="email" asp-for="Email" class="form-control" placeholder="Correo Electrónico" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+
+                                <!-- Dropdown para Rol -->
+                                <div class="form-group">
+                                    <label for="RolId">Rol</label>
+                                    <select asp-for="RolId" class="form-control">
+                                        <option value="">Seleccione un rol</option>
+                                        <option value="1">Soporte</option>
+                                        <option value="2">Administrador</option>
+                                        <option value="3">UsuarioFinal</option>
+                                    </select>
+                                    <span asp-validation-for="RolId" class="text-danger"></span>
+                                </div>
+
+                                <!-- Dropdown para Departamento -->
+                                <div class="form-group">
+                                    <label for="DepartamentoId">Departamento</label>
+                                    <select asp-for="DepartamentoId" class="form-control">
+                                        <option value="">Seleccione un departamento</option>
+                                        <option value="1">Tecnología</option>
+                                        <option value="2">Recursos Humanos</option>
+                                        <option value="3">Contabilidad</option>
+                                    </select>
+                                    <span asp-validation-for="DepartamentoId" class="text-danger"></span>
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn">Actualizar Cuenta</button>
+                                    <a class="btn btn-danger m-l-10" asp-action="Index">Cancelar</a>
+                                </div>
+                            </form>
+                            <!-- End: Form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>

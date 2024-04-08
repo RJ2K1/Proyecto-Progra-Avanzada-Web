@@ -15,8 +15,8 @@
                 <!-- Logo -->
                 <div id="logo">
                     <a href="index.html">
-                        <span class="logo-default">POLO</span>
-                        <span class="logo-dark">POLO</span>
+                        <span class="logo-default">TicketHub</span>
+                        <span class="logo-dark">TicketHub</span>
                     </a>
                 </div>
                 <!-- End: Logo -->
@@ -26,42 +26,24 @@
                         <nav>
                             <ul>
                                 <!-- HOME: Visible para todos los usuarios -->
-                                <li><a href="/">HOME</a></li>
+                                <li><a href="/">Inicio</a></li>
 
                                 <!-- Dashboard: Solo visible para Soporte y Administrador -->
-                                @if (User.IsInRole("Soporte") || User.IsInRole("Administrador"))
+                                @if (User.IsInRole("Administrador"))
                                 {
-                                    <li><a href="/dashboard">DASHBOARD</a></li>
+                                    <li><a asp-controller="Usuario" asp-action="Index">Usuarios</a></li>
                                 }
 
                                 <!-- Crear Ticket: Visible para todos los usuarios autenticados -->
-                                @if (User.Identity.IsAuthenticated)
+                                @if (User.IsInRole("Administrador"))
                                 {
-                                    <li><a href="/tickets/crear">CREAR TICKET</a></li>
+                                    <li><a href="/tickets/crear">Departamentos</a></li>
                                 }
 
                                 <!-- Mis Tickets: Visible para todos los usuarios autenticados -->
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <li><a href="/tickets/mis-tickets">MIS TICKETS</a></li>
-                                }
-
                                 @if (User.IsInRole("Administrador"))
                                 {
-                                    <li><a asp-controller="Admin" asp-action="Index">ADMIN</a></li>
-                                }
-
-
-                                <!-- Exclusivo para Soporte -->
-                                @if (User.IsInRole("Soporte"))
-                                {
-                                    <li><a href="/soporte/exclusivo">SOPORTE EXCLUSIVO</a></li>
-                                }
-
-                                <!-- Exclusivo para Usuario Final -->
-                                @if (User.IsInRole("UsuarioFinal"))
-                                {
-                                    <li><a href="/usuariofinal/exclusivo">USUARIO FINAL EXCLUSIVO</a></li>
+                                    <li><a href="/tickets/mis-tickets">Roles</a></li>
                                 }
 
                                 <!-- Salir: Visible para todos los usuarios autenticados -->
@@ -106,5 +88,6 @@
     <script src="~/js/functions.js"></script>
 
     @RenderSection("Scripts", required: false)
+
 </body>
 </html>

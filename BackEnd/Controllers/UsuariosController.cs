@@ -1,4 +1,5 @@
-﻿using BackEnd.Models;
+﻿using BackEnd.DTO;
+using BackEnd.Models;
 using BackEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace BackEnd.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuariosModel>>> Get()
         {
-            var result = await _usuariosService.GetUsuarios();
+            var result = await _usuariosService.GetUsuariosConDetalles();
             return Ok(result);
         }
 
@@ -55,20 +56,26 @@ namespace BackEnd.Controllers
             }
         }
 
-        // PUT api/Usuarios
-        [HttpPut]
-        public async Task<ActionResult> Put([FromBody] UsuariosModel usuario)
+        // PUT api/Usuarios/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] UsuarioUpdateDto usuarioUpdateDto)
         {
-            var result = await _usuariosService.Update(usuario);
+            if (id != usuarioUpdateDto.Id)
+            {
+                return BadRequest("ID mismatch");
+            }
+
+            var result = await _usuariosService.Update(usuarioUpdateDto);
             if (result)
             {
                 return Ok();
             }
             else
             {
-                return BadRequest();
+                return Ok();
             }
         }
+
 
         // DELETE api/Usuarios/5
         [HttpDelete("{id}")]

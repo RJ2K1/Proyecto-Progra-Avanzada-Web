@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using BackEnd.DTO;
 
 namespace BackEnd.Services.Implementations
 {
@@ -41,20 +42,41 @@ namespace BackEnd.Services.Implementations
             return Convertir(usuario);
         }
 
-        public async Task<List<UsuariosModel>> GetUsuarios()
+        public async Task<List<UsuarioDetalleDto>> GetUsuariosConDetalles()
         {
-            var usuarios = await Unidad.UsuariosDAL.GetAllAsync(); 
-            var usuariosModelList = usuarios.Select(Convertir).ToList();
-            return usuariosModelList;
+            var usuariosConDetalles = await Unidad.UsuariosDAL.GetAllIncludingAsync(); // Asumiendo que este método hace lo que su nombre indica
+            return usuariosConDetalles.Select(u => new UsuarioDetalleDto
+            {
+                Id = u.Id,
+                Nombre = u.Nombre,
+                Email = u.Email,
+                NombreRol = u.Rol != null ? u.Rol.NombreRol : "Sin Rol", // Proporciona "Sin Rol" si u.Rol es nulo
+                NombreDepartamento = u.Departamento != null ? u.Departamento.Nombre : "Sin Departamento" // Proporciona "Sin Departamento" si u.Departamento es nulo
+            }).ToList();
         }
 
-        public async Task<bool> Update(UsuariosModel usuarioModel)
+
+        public async Task<bool> Update(UsuarioUpdateDto usuarioUpdateDto)
         {
-            var usuario = Convertir(usuarioModel);
-            await Unidad.UsuariosDAL.UpdateAsync(usuario); 
-            var result = Unidad.Complete(); 
-            return result;
+            var usuarioExistente = await Unidad.UsuariosDAL.GetAsync(usuarioUpdateDto.Id);
+            if (usuarioExistente == null)
+            {
+                // Handle the case where the user doesn't exist.
+                return false;
+            }
+
+            // Update the fields from the DTO, except for the ID.
+            usuarioExistente.Nombre = usuarioUpdateDto.Nombre;
+            usuarioExistente.Email = usuarioUpdateDto.Email;
+            usuarioExistente.RolId = usuarioUpdateDto.RolId;
+            usuarioExistente.DepartamentoId = usuarioUpdateDto.DepartamentoId;
+
+            // Save the changes.
+            await Unidad.UsuariosDAL.UpdateAsync(usuarioExistente);
+            return Unidad.Complete();
         }
+
+
 
         private UsuariosModel Convertir(Usuarios usuario)
         {

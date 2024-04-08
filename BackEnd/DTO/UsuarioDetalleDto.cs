@@ -1,12 +1,10 @@
-﻿namespace FrontEnd.ApiModels
+﻿namespace BackEnd.DTO
 {
-    public class Usuario
+    public class UsuarioDetalleDto
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
         public string Email { get; set; }
-        public int RolId { get; set; }
-        public int? DepartamentoId { get; set; }
         public string NombreRol { get; set; }
         public string NombreDepartamento { get; set; }
     }
