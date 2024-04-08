@@ -1,0 +1,49 @@
+﻿@model List<FrontEnd.Models.UsuarioViewModel>
+
+@{
+    ViewData["Title"] = "Lista de Usuarios";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<!-- Page Content -->
+<section id="page-content" class="no-sidebar">
+    <div class="container">
+        <!-- DataTable -->
+        <div class="row mb-5">
+            <div class="col-lg-12">
+                <h4>Lista de Usuarios</h4>
+                <table id="datatable" class="table table-bordered table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Departamento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var usuario in Model)
+                        {
+                            <tr>
+                                <td>@usuario.Nombre</td>
+                                <td>@usuario.Email</td>
+                                <td>@usuario.NombreRol</td>
+                                <td>@usuario.NombreDepartamento</td>
+                                <td>
+                                    <a class="ml-2" asp-controller="Usuario" asp-action="Edit" asp-route-id="@usuario.Id" data-toggle="tooltip" data-original-title="Edit"><i class="icon-edit"></i></a>
+                                    <a class="ml-2" href="#" data-toggle="tooltip" data-original-title="Delete"><i class="icon-trash-2"></i></a>
+                                    <a class="ml-2" href="#" data-toggle="tooltip" data-original-title="Settings"><i class="icon-settings"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- end: DataTable -->
+    </div>
+</section>
+<!-- end: Page Content -->
+
+

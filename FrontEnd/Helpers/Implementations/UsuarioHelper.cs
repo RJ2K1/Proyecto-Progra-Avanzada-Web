@@ -20,7 +20,7 @@ namespace FrontEnd.Helpers.Implementations
         public async Task<UsuarioViewModel> AddUsuario(UsuarioViewModel usuarioViewModel)
         {
             var usuarioApi = Convertir(usuarioViewModel);
-            var responseMessage = await _repository.PostResponse("api/Usuario", usuarioApi);
+            var responseMessage = await _repository.PostResponse("api/Usuarios", usuarioApi);
             if (responseMessage.IsSuccessStatusCode)
             {
                 var content = await responseMessage.Content.ReadAsStringAsync();
@@ -32,13 +32,13 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task<bool> DeleteUsuario(int id)
         {
-            var responseMessage = await _repository.DeleteResponse($"api/Usuario/{id}");
+            var responseMessage = await _repository.DeleteResponse($"api/Usuarios/{id}");
             return responseMessage.IsSuccessStatusCode;
         }
 
         public async Task<List<UsuarioViewModel>> GetUsuarios()
         {
-            var responseMessage = await _repository.GetResponse("api/usuario");
+            var responseMessage = await _repository.GetResponse("api/usuarios");
             if (responseMessage.IsSuccessStatusCode)
             {
                 var content = await responseMessage.Content.ReadAsStringAsync();
@@ -50,7 +50,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task<UsuarioViewModel> GetUsuario(int id)
         {
-            var responseMessage = await _repository.GetResponse($"api/Usuario/{id}");
+            var responseMessage = await _repository.GetResponse($"api/Usuarios/{id}");
             if (responseMessage.IsSuccessStatusCode)
             {
                 var content = await responseMessage.Content.ReadAsStringAsync();
@@ -63,7 +63,7 @@ namespace FrontEnd.Helpers.Implementations
         public async Task<UsuarioViewModel> UpdateUsuario(UsuarioViewModel usuarioViewModel)
         {
             var usuarioApi = Convertir(usuarioViewModel);
-            var responseMessage = await _repository.PutResponse($"api/Usuario/{usuarioViewModel.Id}", usuarioApi);
+            var responseMessage = await _repository.PutResponse($"api/Usuarios/{usuarioViewModel.Id}", usuarioApi);
             if (responseMessage.IsSuccessStatusCode)
             {
                 var content = await responseMessage.Content.ReadAsStringAsync();
@@ -80,7 +80,6 @@ namespace FrontEnd.Helpers.Implementations
                 Id = usuarioViewModel.Id,
                 Nombre = usuarioViewModel.Nombre,
                 Email = usuarioViewModel.Email,
-                Contrasena = usuarioViewModel.Contrasena, // Solo si vas a enviar contraseñas
                 RolId = usuarioViewModel.RolId,
                 DepartamentoId = usuarioViewModel.DepartamentoId ?? 0, // Uso de ?? porque DepartamentoId es int?
                 NombreRol = usuarioViewModel.NombreRol,
@@ -95,7 +94,6 @@ namespace FrontEnd.Helpers.Implementations
                 Id = usuario.Id,
                 Nombre = usuario.Nombre,
                 Email = usuario.Email,
-                Contrasena = usuario.Contrasena, // Solo si vas a recibir contraseñas
                 RolId = usuario.RolId,
                 DepartamentoId = usuario.DepartamentoId,
                 NombreRol = usuario.NombreRol,
