@@ -19,7 +19,7 @@ namespace BackEnd.Services.Implementations
         public async Task<bool> add(TicketModel ticketModel)
         {
            var ticket = Convertir(ticketModel);
-            await _Unidad._ticketsDAL.AddAsync(ticket);
+            await _Unidad.TicketsDAL.AddAsync(ticket);
             var result = _Unidad.Complete();
             return result;
         }
@@ -27,20 +27,20 @@ namespace BackEnd.Services.Implementations
         public async Task<bool> delete(int id)
         {
             var ticket = new Ticket { Id = id };
-            await _Unidad._ticketsDAL.RemoveAsync(ticket);
+            await _Unidad.TicketsDAL.RemoveAsync(ticket);
             var result= _Unidad.Complete();
             return result;
         }
 
         public async Task<TicketModel> getById(int id)
         {
-            var ticket = await _Unidad._ticketsDAL.GetAsync(id);
+            var ticket = await _Unidad.TicketsDAL.GetAsync(id);
             return Convertir(ticket);
         }
 
         public async Task<List<TicketModel>> GetTickts()
         {
-            var ticket= await _Unidad._ticketsDAL.GetAllAsync();
+            var ticket= await _Unidad.TicketsDAL.GetAllAsync();
             var List= ticket.Select(Convertir).ToList();
             return List;
         }
@@ -48,7 +48,7 @@ namespace BackEnd.Services.Implementations
         public async Task<bool> Update(TicketModel ticketModel)
         {
             var ticket = Convertir(ticketModel);
-            await _Unidad._ticketsDAL.UpdateAsync(ticket);
+            await _Unidad.TicketsDAL.UpdateAsync(ticket);
             var result= _Unidad.Complete(); 
             return result;
         }

@@ -6,61 +6,114 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Helpers.Implementations
 {
     public class RolHelper : IRolHelper
     {
-        private readonly IServiceRepository _repository;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly string _apiBaseUrl;
+        private readonly ILogger<RolHelper> _logger;
 
-        public RolHelper(IServiceRepository repository)
+        public RolHelper(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<RolHelper> logger)
         {
-            _repository = repository;
+            _httpClientFactory = httpClientFactory;
+            _apiBaseUrl = configuration.GetValue<string>("BackEnd:Url");
+            _logger = logger;
         }
 
         public async Task<List<RolViewModel>> GetRoles()
         {
-            var responseMessage = await _repository.GetResponse("api/Roles");
-            if (responseMessage.IsSuccessStatusCode)
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync($"{_apiBaseUrl}api/Roles");
+
+            if (response.IsSuccessStatusCode)
             {
-                var content = await responseMessage.Content.ReadAsStringAsync();
-                var roles = JsonConvert.DeserializeObject<List<Rol>>(content);
-                return roles.ConvertAll(r => Convertir(r));
+                var content = await response.Content.ReadAsStringAsync();
+                var roles = JsonConvert.DeserializeObject<List<RolViewModel>>(content);
+                return roles;
             }
-            return new List<RolViewModel>();
+            else
+            {
+                _logger.LogError($"Error al obtener roles. Código de estado: {response.StatusCode}");
+                return new List<RolViewModel>();
+            }
         }
 
         public async Task<RolViewModel> GetRol(int id)
         {
-            var responseMessage = await _repository.GetResponse($"api/Roles/{id}");
-            if (responseMessage.IsSuccessStatusCode)
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync($"{_apiBaseUrl}api/Roles/{id}");
+
+            if (response.IsSuccessStatusCode)
             {
-                var content = await responseMessage.Content.ReadAsStringAsync();
-                var rol = JsonConvert.DeserializeObject<Rol>(content);
-                return Convertir(rol);
+                var content = await response.Content.ReadAsStringAsync();
+                var rol = JsonConvert.DeserializeObject<RolViewModel>(content);
+                return rol;
             }
-            return null;
+            else
+            {
+                _logger.LogError($"Error al obtener el rol con ID {id}. Código de estado: {response.StatusCode}");
+                return null;
+            }
         }
 
         public async Task AddRol(RolViewModel rolViewModel)
         {
-            var rolApi = Convertir(rolViewModel);
-            var content = new StringContent(JsonConvert.SerializeObject(rolApi), Encoding.UTF8, "application/json");
-            await _repository.PostResponse("api/Roles", content);
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonConvert.SerializeObject(rolViewModel), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_apiBaseUrl}api/Roles", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _logger.LogInformation($"Rol {rolViewModel.NombreRol} agregado con éxito.");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Error al agregar rol: {errorContent}");
+                throw new ApplicationException($"Error al agregar rol: {errorContent}");
+            }
         }
 
         public async Task UpdateRol(RolViewModel rolViewModel)
         {
-            var rolApi = Convertir(rolViewModel);
-            var content = new StringContent(JsonConvert.SerializeObject(rolApi), Encoding.UTF8, "application/json");
-            await _repository.PutResponse($"api/Roles/{rolViewModel.Id}", content);
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonConvert.SerializeObject(rolViewModel), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_apiBaseUrl}api/Roles/{rolViewModel.Id}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _logger.LogInformation($"Rol {rolViewModel.Id} actualizado con éxito.");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Error al actualizar el rol {rolViewModel.Id}: {errorContent}");
+                throw new ApplicationException($"Error al actualizar el rol: {errorContent}");
+            }
         }
 
         public async Task DeleteRol(int id)
         {
-            await _repository.DeleteResponse($"api/Roles/{id}");
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.DeleteAsync($"{_apiBaseUrl}api/Roles/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                _logger.LogInformation($"Rol con ID {id} eliminado con éxito.");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Error al eliminar el rol con ID {id}: {errorContent}");
+                throw new ApplicationException($"Error al eliminar el rol: {errorContent}");
+            }
         }
 
+        // Métodos privados para convertir entre Rol y RolViewModel, si es necesario.
         private Rol Convertir(RolViewModel rolViewModel)
         {
             return new Rol

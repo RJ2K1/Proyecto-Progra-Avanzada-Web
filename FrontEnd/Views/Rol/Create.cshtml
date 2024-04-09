@@ -1,0 +1,37 @@
+﻿@model FrontEnd.Models.RolViewModel
+
+@{
+    ViewData["Title"] = "Crear Rol";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<body>
+    <div class="body-inner">
+        <section class="fullscreen" data-bg-parallax="/images/pages/BackGround.png">
+            <div class="container container-fullscreen">
+                <div class="text-middle">
+                    <div class="row">
+                        <div class="col-lg-14 center p-40 background-white b-r-6">
+                            <h3>Crear Nuevo Rol</h3>
+                            <p>Introduce la información del nuevo rol.</p>
+                            <form asp-action="Create" asp-controller="Rol" method="post" class="form-transparent-grey">
+                                <div class="form-group">
+                                    <label for="NombreRol">Nombre del Rol</label>
+                                    <input type="text" asp-for="NombreRol" class="form-control" placeholder="Nombre del Rol" />
+                                    <span asp-validation-for="NombreRol" class="text-danger"></span>
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn">Crear Rol</button>
+                                    <a class="btn btn-danger m-l-10" asp-action="Index">Cancelar</a>
+                                </div>
+                            </form>
+                            <!-- End: Form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>

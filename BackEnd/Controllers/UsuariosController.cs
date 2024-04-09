@@ -72,7 +72,7 @@ namespace BackEnd.Controllers
             }
             else
             {
-                return Ok();
+                return BadRequest();
             }
         }
 

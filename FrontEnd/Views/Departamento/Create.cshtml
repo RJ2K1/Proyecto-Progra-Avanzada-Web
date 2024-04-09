@@ -1,0 +1,42 @@
+﻿@model FrontEnd.Models.DepartamentoViewModel
+
+@{
+    ViewData["Title"] = "Crear Departamento";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<body>
+    <div class="body-inner">
+        <section class="fullscreen" data-bg-parallax="/images/pages/BackGround.png">
+            <div class="container container-fullscreen">
+                <div class="text-middle">
+                    <div class="row">
+                        <div class="col-lg-14 center p-40 background-white b-r-6">
+                            <h3>Crear Nuevo Departamento</h3>
+                            <p>Introduce la información del nuevo departamento.</p>
+                            <form asp-action="Create" asp-controller="Departamento" method="post" class="form-transparent-grey">
+                                <div class="form-group">
+                                    <label for="NombreDepartamento">Nombre del Departamento</label>
+                                    <input type="text" asp-for="NombreDepartamento" class="form-control" placeholder="Nombre del Departamento" />
+                                    <span asp-validation-for="NombreDepartamento" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Descripcion">Descripción</label>
+                                    <textarea asp-for="Descripcion" class="form-control" placeholder="Descripción del Departamento"></textarea>
+                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn">Crear Departamento</button>
+                                    <a class="btn btn-danger m-l-10" asp-action="Index">Cancelar</a>
+                                </div>
+                            </form>
+                            <!-- End: Form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>

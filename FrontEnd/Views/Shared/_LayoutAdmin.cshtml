@@ -37,13 +37,13 @@
                                 <!-- Crear Ticket: Visible para todos los usuarios autenticados -->
                                 @if (User.IsInRole("Administrador"))
                                 {
-                                    <li><a href="/tickets/crear">Departamentos</a></li>
+                                    <li><a asp-controller="Departamento" asp-action="Index">Departamentos</a></li>
                                 }
 
                                 <!-- Mis Tickets: Visible para todos los usuarios autenticados -->
                                 @if (User.IsInRole("Administrador"))
                                 {
-                                    <li><a href="/tickets/mis-tickets">Roles</a></li>
+                                    <li><a asp-controller="Rol" asp-action="Index">Roles</a></li>
                                 }
 
                                 <!-- Salir: Visible para todos los usuarios autenticados -->

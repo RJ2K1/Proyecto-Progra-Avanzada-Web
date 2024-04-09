@@ -36,8 +36,13 @@ namespace BackEnd.Controllers
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] RolesModel rolModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await _rolesService.Add(rolModel);
-            if (!result) return BadRequest();
+            if (!result) return BadRequest("Error al crear el rol.");
             return CreatedAtAction(nameof(GetById), new { id = rolModel.Id }, rolModel);
         }
 
