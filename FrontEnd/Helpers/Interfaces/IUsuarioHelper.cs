@@ -1,6 +1,4 @@
 ﻿using FrontEnd.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FrontEnd.Helpers.Interfaces
 {
@@ -8,8 +6,8 @@ namespace FrontEnd.Helpers.Interfaces
     {
         Task<List<UsuarioViewModel>> GetUsuarios();
         Task<UsuarioViewModel> GetUsuario(int id);
-        Task<UsuarioViewModel> AddUsuario(UsuarioViewModel usuario);
-        Task<bool> DeleteUsuario(int id); // Cambiado a Task<bool>
-        Task<UsuarioViewModel> UpdateUsuario(UsuarioViewModel usuario);
+        Task<bool> AddUsuario(UsuarioCreateViewModel usuario);
+        Task<bool> DeleteUsuario(int id);
+        Task<bool> UpdateUsuario(UsuarioUpdateViewModel usuario); // Actualizado para usar UsuarioUpdateViewModel
     }
 }

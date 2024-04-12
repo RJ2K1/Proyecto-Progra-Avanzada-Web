@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
 
 // Configuración de la cadena de conexión de la base de datos.
 builder.Services.AddDbContext<ProyectoWebContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionz")));
 
 // Configuración de autenticación basada en cookies.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

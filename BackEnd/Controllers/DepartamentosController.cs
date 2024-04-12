@@ -50,19 +50,18 @@ namespace BackEnd.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Put([FromBody] DepartamentosModel departamento)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] DepartamentosModel departamentoModel)
         {
-            var result = await _departamentosService.Update(departamento);
-            if (result)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            if (id != departamentoModel.Id) return BadRequest("ID mismatch");
+
+            var result = await _departamentosService.Update(departamentoModel);
+            if (!result) return NotFound("El departamento no existe o no se pudo actualizar.");
+
+            return NoContent(); // Retorna un 204 No Content si la actualización fue exitosa
         }
+
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)

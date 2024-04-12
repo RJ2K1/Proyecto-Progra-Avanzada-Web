@@ -24,24 +24,25 @@ namespace FrontEnd.Helpers.Implementations
             _logger = logger;
         }
 
-        public async Task<UsuarioViewModel> AddUsuario(UsuarioViewModel usuarioViewModel)
+        public async Task<bool> AddUsuario(UsuarioCreateViewModel usuarioCreateViewModel)
         {
             var client = _httpClientFactory.CreateClient();
-            var content = new StringContent(JsonConvert.SerializeObject(usuarioViewModel), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(usuarioCreateViewModel), Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{_apiBaseUrl}api/Usuarios", content);
 
             if (response.IsSuccessStatusCode)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var addedUsuario = JsonConvert.DeserializeObject<UsuarioViewModel>(responseContent);
-                return addedUsuario;
+                _logger.LogInformation("Usuario creado exitosamente en el backend.");
+                return true;
             }
             else
             {
                 _logger.LogError($"Error al agregar usuario. Respuesta: {response.StatusCode}");
-                return null;
+                return false;
             }
         }
+
+
 
         public async Task<bool> DeleteUsuario(int id)
         {
@@ -95,23 +96,24 @@ namespace FrontEnd.Helpers.Implementations
             }
         }
 
-        public async Task<UsuarioViewModel> UpdateUsuario(UsuarioViewModel usuarioViewModel)
+        public async Task<bool> UpdateUsuario(UsuarioUpdateViewModel usuarioUpdateViewModel)
         {
             var client = _httpClientFactory.CreateClient();
-            var content = new StringContent(JsonConvert.SerializeObject(usuarioViewModel), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"{_apiBaseUrl}api/Usuarios/{usuarioViewModel.Id}", content);
+            var content = new StringContent(JsonConvert.SerializeObject(usuarioUpdateViewModel), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_apiBaseUrl}api/Usuarios/{usuarioUpdateViewModel.Id}", content);
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var updatedUsuario = JsonConvert.DeserializeObject<UsuarioViewModel>(responseContent);
-                return updatedUsuario;
+                _logger.LogError($"Error al actualizar usuario. ID: {usuarioUpdateViewModel.Id}, Respuesta: {response.StatusCode}");
+                return false;
             }
-            else
-            {
-                _logger.LogError($"Error al actualizar usuario. Respuesta: {response.StatusCode}");
-                return null;
-            }
+
+            return true;
         }
+
+
+
+
+
     }
 }

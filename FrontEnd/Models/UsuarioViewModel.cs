@@ -9,5 +9,6 @@
         public int? DepartamentoId { get; set; }
         public string NombreRol { get; set; } // Solo para lectura
         public string NombreDepartamento { get; set; } // Solo para lectura
+        public string Contrasena { get; set; } // Añadir para creación y puede ser null para actualización
     }
 }
