@@ -52,12 +52,22 @@ namespace BackEnd.Services.Implementations
 
         public async Task<bool> Update(DepartamentosModel departamentoModel)
         {
+            var departamento = await _unidadDeTrabajo.DepartamentosDAL.GetAsync(departamentoModel.Id);
+            if (departamento == null)
+            {
+             
+                return false;
+            }
 
-            var departamento = Convertir(departamentoModel);
+          
+            departamento.Nombre = departamentoModel.NombreDepartamento; 
+            departamento.Descripcion = departamentoModel.Descripcion;
+
             await _unidadDeTrabajo.DepartamentosDAL.UpdateAsync(departamento);
-            var result = _unidadDeTrabajo.Complete();
+            var result = await _unidadDeTrabajo.CompleteAsync();
             return result;
         }
+
 
         private DepartamentosModel Convertir(Departamentos departamento)
         {

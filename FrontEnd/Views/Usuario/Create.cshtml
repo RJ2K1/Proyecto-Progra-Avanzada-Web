@@ -1,5 +1,71 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model FrontEnd.Models.UsuarioCreateViewModel
+
 @{
+    ViewData["Title"] = "Crear Usuario";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
+
+<body>
+    <div class="body-inner">
+        <section class="fullscreen" data-bg-parallax="/images/pages/BackGround.png">
+            <div class="container container-fullscreen">
+                <div class="text-middle">
+                    <div class="row">
+                        <div class="col-lg-12 center p-40 background-white b-r-6">
+                            <h3>Crear Nuevo Usuario</h3>
+                            <p>Introduce la información para el nuevo usuario.</p>
+                            <form asp-action="Create" asp-controller="Usuario" method="post" class="form-transparent-grey">
+                                <div class="form-group">
+                                    <label for="Nombre">Nombre</label>
+                                    <input type="text" asp-for="Nombre" class="form-control" placeholder="Nombre del Usuario" />
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Email">Correo Electrónico</label>
+                                    <input type="email" asp-for="Email" class="form-control" placeholder="Correo Electrónico" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Contrasena">Contraseña</label>
+                                    <input type="password" asp-for="Contrasena" class="form-control" placeholder="Contraseña" />
+                                    <span asp-validation-for="Contrasena" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="ConfirmarContrasena">Confirmar Contraseña</label>
+                                    <input type="password" asp-for="ConfirmarContrasena" class="form-control" placeholder="Confirmar Contraseña" />
+                                    <span asp-validation-for="ConfirmarContrasena" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="RolId">Rol</label>
+                                    <select asp-for="RolId" asp-items="@ViewBag.Roles" class="form-control">
+                                        <option value="">Seleccione un rol</option>
+                                    </select>
+                                    <span asp-validation-for="RolId" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="DepartamentoId">Departamento</label>
+                                    <select asp-for="DepartamentoId" asp-items="@ViewBag.Departamentos" class="form-control">
+                                        <option value="">Seleccione un departamento</option>
+                                    </select>
+                                    <span asp-validation-for="DepartamentoId" class="text-danger"></span>
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn">Crear Usuario</button>
+                                    <a class="btn btn-danger m-l-10" asp-action="Index">Cancelar</a>
+                                </div>
+                            </form>
+                            <!-- End: Form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>

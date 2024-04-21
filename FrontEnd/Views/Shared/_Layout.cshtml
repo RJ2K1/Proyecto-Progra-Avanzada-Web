@@ -43,7 +43,8 @@
                                 <!-- Mis Tickets: Visible para todos los usuarios autenticados -->
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <li><a href="/tickets/mis-tickets">MIS TICKETS</a></li>
+                                    <li><a asp-controller="Ticket" asp-action="ListTicket">MIS TICKETS</a></li>
+
                                 }
 
                                 @if (User.IsInRole("Administrador"))

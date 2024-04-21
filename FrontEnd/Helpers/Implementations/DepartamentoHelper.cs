@@ -4,78 +4,95 @@ using FrontEnd.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Helpers.Implementations
 {
     public class DepartamentoHelper : IDepartamentoHelper
     {
-        private readonly IServiceRepository _repository;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly string _apiBaseUrl;
+        private readonly ILogger<DepartamentoHelper> _logger;
 
-        public DepartamentoHelper(IServiceRepository repository)
+        public DepartamentoHelper(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<DepartamentoHelper> logger)
         {
-            _repository = repository;
+            _httpClientFactory = httpClientFactory;
+            _apiBaseUrl = configuration.GetValue<string>("BackEnd:Url");
+            _logger = logger;
         }
 
         public async Task<List<DepartamentoViewModel>> GetDepartamentos()
         {
-            var responseMessage = await _repository.GetResponse("api/Departamentos");
-            if (responseMessage.IsSuccessStatusCode)
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync($"{_apiBaseUrl}api/Departamentos");
+
+            if (response.IsSuccessStatusCode)
             {
-                var content = await responseMessage.Content.ReadAsStringAsync();
-                var departamentos = JsonConvert.DeserializeObject<List<Departamento>>(content);
-                return departamentos.ConvertAll(d => Convertir(d));
+                var content = await response.Content.ReadAsStringAsync();
+                var departamentos = JsonConvert.DeserializeObject<List<DepartamentoViewModel>>(content);
+                return departamentos;
             }
-            return new List<DepartamentoViewModel>();
+            else
+            {
+                _logger.LogError($"Error al obtener departamentos. Respuesta: {response.StatusCode}");
+                return new List<DepartamentoViewModel>();
+            }
         }
 
         public async Task<DepartamentoViewModel> GetDepartamento(int id)
         {
-            var responseMessage = await _repository.GetResponse($"api/Departamentos/{id}");
-            if (responseMessage.IsSuccessStatusCode)
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync($"{_apiBaseUrl}api/Departamentos/{id}");
+
+            if (response.IsSuccessStatusCode)
             {
-                var content = await responseMessage.Content.ReadAsStringAsync();
-                var departamento = JsonConvert.DeserializeObject<Departamento>(content);
-                return Convertir(departamento);
+                var content = await response.Content.ReadAsStringAsync();
+                var departamento = JsonConvert.DeserializeObject<DepartamentoViewModel>(content);
+                return departamento;
             }
-            return null;
+            else
+            {
+                _logger.LogError($"Error al obtener el departamento con ID {id}. Respuesta: {response.StatusCode}");
+                return null;
+            }
         }
 
         public async Task AddDepartamento(DepartamentoViewModel departamentoViewModel)
         {
-            var departamentoApi = Convertir(departamentoViewModel);
-            await _repository.PostResponse("api/Departamentos", departamentoApi);
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonConvert.SerializeObject(departamentoViewModel), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_apiBaseUrl}api/Departamentos", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"Error al agregar departamento. Respuesta: {response.StatusCode}");
+            }
         }
 
         public async Task UpdateDepartamento(DepartamentoViewModel departamentoViewModel)
         {
-            var departamentoApi = Convertir(departamentoViewModel);
-            await _repository.PutResponse($"api/Departamentos/{departamentoViewModel.Id}", departamentoApi);
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonConvert.SerializeObject(departamentoViewModel), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_apiBaseUrl}api/Departamentos/{departamentoViewModel.Id}", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"Error al actualizar departamento. Respuesta: {response.StatusCode}");
+            }
         }
 
         public async Task DeleteDepartamento(int id)
         {
-            await _repository.DeleteResponse($"api/Departamentos/{id}");
-        }
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.DeleteAsync($"{_apiBaseUrl}api/Departamentos/{id}");
 
-        private Departamento Convertir(DepartamentoViewModel departamentoViewModel)
-        {
-            return new Departamento
+            if (!response.IsSuccessStatusCode)
             {
-                Id = departamentoViewModel.Id,
-                NombreDepartamento = departamentoViewModel.NombreDepartamento,
-                Descripcion = departamentoViewModel.Descripcion
-            };
-        }
-
-        private DepartamentoViewModel Convertir(Departamento departamento)
-        {
-            return new DepartamentoViewModel
-            {
-                Id = departamento.Id,
-                NombreDepartamento = departamento.NombreDepartamento,
-                Descripcion = departamento.Descripcion
-            };
+                _logger.LogError($"Error al eliminar departamento con ID {id}. Respuesta: {response.StatusCode}");
+            }
         }
     }
 }

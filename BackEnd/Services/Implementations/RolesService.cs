@@ -21,19 +21,21 @@ namespace BackEnd.Services.Implementations
         {
             var rol = new Roles { NombreRol = rolModel.NombreRol };
             await _unidadDeTrabajo.RolesDAL.AddAsync(rol);
-            return _unidadDeTrabajo.Complete(); 
+            return await _unidadDeTrabajo.CompleteAsync();
         }
 
         public async Task<bool> Delete(int id)
         {
-            var rol = new Roles { Id = id }; 
+            var rol = await _unidadDeTrabajo.RolesDAL.GetAsync(id);
+            if (rol == null) return false;
             await _unidadDeTrabajo.RolesDAL.RemoveAsync(rol);
-            return _unidadDeTrabajo.Complete(); 
+            return await _unidadDeTrabajo.CompleteAsync();
         }
 
         public async Task<RolesModel> GetById(int id)
         {
             var rol = await _unidadDeTrabajo.RolesDAL.GetAsync(id);
+            if (rol == null) return null;
             return new RolesModel
             {
                 Id = rol.Id,
@@ -53,11 +55,11 @@ namespace BackEnd.Services.Implementations
 
         public async Task<bool> Update(RolesModel rolModel)
         {
-            var rol = await _unidadDeTrabajo.RolesDAL.GetAsync(rolModel.Id); 
+            var rol = await _unidadDeTrabajo.RolesDAL.GetAsync(rolModel.Id);
             if (rol == null) return false;
             rol.NombreRol = rolModel.NombreRol;
-            await _unidadDeTrabajo.RolesDAL.UpdateAsync(rol); 
-            return _unidadDeTrabajo.Complete();
+            await _unidadDeTrabajo.RolesDAL.UpdateAsync(rol);
+            return await _unidadDeTrabajo.CompleteAsync();
         }
     }
 }

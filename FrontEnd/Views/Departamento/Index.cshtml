@@ -1,7 +1,7 @@
-﻿@model List<FrontEnd.Models.UsuarioViewModel>
+﻿@model List<FrontEnd.Models.DepartamentoViewModel>
 
 @{
-    ViewData["Title"] = "Lista de Usuarios";
+    ViewData["Title"] = "Lista de Departamentos";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
@@ -11,29 +11,25 @@
         <!-- DataTable -->
         <div class="row mb-5">
             <div class="col-lg-12">
-                <h4>Lista de Usuarios</h4>
+                <h4>Lista de Departamentos</h4>
                 <table id="datatable" class="table table-bordered table-hover" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Departamento</th>
+                            <th>Nombre del Departamento</th>
+                            <th>Descripción</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var usuario in Model)
+                        @foreach (var departamento in Model)
                         {
                             <tr>
-                                <td>@usuario.Nombre</td>
-                                <td>@usuario.Email</td>
-                                <td>@usuario.NombreRol</td>
-                                <td>@usuario.NombreDepartamento</td>
+                                <td>@departamento.NombreDepartamento</td>
+                                <td>@departamento.Descripcion</td>
                                 <td>
-                                    <a class="ml-2" asp-controller="Usuario" asp-action="Edit" asp-route-id="@usuario.Id" data-toggle="tooltip" data-original-title="Edit"><i class="icon-edit"></i></a>
+                                    <a class="ml-2" asp-controller="Departamento" asp-action="Edit" asp-route-id="@departamento.Id" data-toggle="tooltip" data-original-title="Edit"><i class="icon-edit"></i></a>
                                     <!-- Botón para activar el modal -->
-                                    <a class="ml-2" href="#" data-toggle="modal" data-target="#deleteModal-@usuario.Id">
+                                    <a class="ml-2" href="#" data-toggle="modal" data-target="#deleteModal-@departamento.Id">
                                         <i class="icon-trash-2"></i>
                                     </a>
                                 </td>
@@ -44,40 +40,40 @@
             </div>
         </div>
         <!-- end: DataTable -->
-        <!-- Add Usuario Button -->
+        <!-- Add Departamento Button -->
         <div class="row">
-            <div class="col-lg-12 mb-3">
-                <a asp-controller="Usuario" asp-action="Create" class="btn btn-primary">Crear Nuevo Usuario</a>
+            <div class="col-lg-12">
+                <a asp-controller="Departamento" asp-action="Create" class="btn btn-primary">Agregar Departamento</a>
             </div>
         </div>
     </div>
 </section>
 <!-- end: Page Content -->
 <!-- Modal -->
-@foreach (var usuario in Model)
+@foreach (var departamento in Model)
 {
-    <div class="modal fade" id="deleteModal-@usuario.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel-@usuario.Id">
+    <div class="modal fade" id="deleteModal-@departamento.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel-@departamento.Id">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel-@usuario.Id">Confirmar Eliminación</h5>
+                    <h5 class="modal-title" id="deleteModalLabel-@departamento.Id">Confirmar Eliminación</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    Estás seguro de que quieres eliminar el usuario @usuario.Nombre?
+                    Estás seguro de que quieres eliminar el departamento @departamento.NombreDepartamento?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <!-- Botón de confirmación que enviará el formulario -->
-                    <button type="submit" form="deleteForm-@usuario.Id" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" form="deleteForm-@departamento.Id" class="btn btn-danger">Eliminar</button>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Formulario de eliminación para cada usuario -->
-    <form asp-action="Delete" asp-controller="Usuario" asp-route-id="@usuario.Id" method="post" id="deleteForm-@usuario.Id">
+    <!-- Formulario de eliminación para cada departamento -->
+    <form asp-action="Delete" asp-controller="Departamento" asp-route-id="@departamento.Id" method="post" id="deleteForm-@departamento.Id">
         @Html.AntiForgeryToken()
     </form>
 }

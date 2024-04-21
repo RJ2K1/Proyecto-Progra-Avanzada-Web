@@ -21,7 +21,6 @@ namespace DAL.Implementations
         public async Task<bool> AddAsync(TEntity entity)
         {
             _Context.Set<TEntity>().Add(entity);
-            await _Context.SaveChangesAsync();
             return true;
         }
 
@@ -43,7 +42,6 @@ namespace DAL.Implementations
         public async Task<bool> RemoveAsync(TEntity entity)
         {
             _Context.Set<TEntity>().Remove(entity);
-            await _Context.SaveChangesAsync();
             return true;
         }
 
@@ -51,7 +49,6 @@ namespace DAL.Implementations
         {
             _Context.Set<TEntity>().Attach(entity);
             _Context.Entry(entity).State = EntityState.Modified;
-            await _Context.SaveChangesAsync();
             return true;
         }
     }

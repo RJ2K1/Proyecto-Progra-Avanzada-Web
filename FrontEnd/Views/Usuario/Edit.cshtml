@@ -1,11 +1,9 @@
-﻿@model FrontEnd.Models.UsuarioViewModel
+﻿@model FrontEnd.Models.UsuarioUpdateViewModel
 
 @{
-    ViewData["Title"] = "Lista de Usuarios";
+    ViewData["Title"] = "Editar Usuario";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
-
-
 
 <body>
     <div class="body-inner">
@@ -13,13 +11,16 @@
             <div class="container container-fullscreen">
                 <div class="text-middle">
                     <div class="row">
-                        <div class="col-lg-10 center p-40 background-white b-r-6">
-                            <h3>Modificar Usuario</h3>
-                            <p>Modifica el usuario seleccionado.</p>
-                            <form asp-action="Edit" asp-controller="Usuario" method="put" class="form-transparent-grey">
+                        <div class="col-lg-14 center p-40 background-white b-r-6">
+                            <h3>Editar Usuario</h3>
+                            <p>Modifica la información del usuario.</p>
+                            <form asp-action="Edit" asp-controller="Usuario" method="post" class="form-transparent-grey">
+                                <!-- Campo oculto para el ID del usuario -->
+                                <input type="hidden" asp-for="Id" />
+
                                 <div class="form-group">
                                     <label for="Nombre">Nombre</label>
-                                    <input type="text" asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                                    <input type="text" asp-for="Nombre" class="form-control" placeholder="Nombre del Usuario" />
                                     <span asp-validation-for="Nombre" class="text-danger"></span>
                                 </div>
 
@@ -32,11 +33,8 @@
                                 <!-- Dropdown para Rol -->
                                 <div class="form-group">
                                     <label for="RolId">Rol</label>
-                                    <select asp-for="RolId" class="form-control">
+                                    <select asp-for="RolId" asp-items="@ViewBag.Roles" class="form-control">
                                         <option value="">Seleccione un rol</option>
-                                        <option value="1">Soporte</option>
-                                        <option value="2">Administrador</option>
-                                        <option value="3">UsuarioFinal</option>
                                     </select>
                                     <span asp-validation-for="RolId" class="text-danger"></span>
                                 </div>
@@ -44,18 +42,15 @@
                                 <!-- Dropdown para Departamento -->
                                 <div class="form-group">
                                     <label for="DepartamentoId">Departamento</label>
-                                    <select asp-for="DepartamentoId" class="form-control">
+                                    <select asp-for="DepartamentoId" asp-items="@ViewBag.Departamentos" class="form-control">
                                         <option value="">Seleccione un departamento</option>
-                                        <option value="1">Tecnología</option>
-                                        <option value="2">Recursos Humanos</option>
-                                        <option value="3">Contabilidad</option>
                                     </select>
                                     <span asp-validation-for="DepartamentoId" class="text-danger"></span>
                                 </div>
 
                                 <!-- Botones de acción -->
                                 <div class="form-group">
-                                    <button type="submit" class="btn">Actualizar Cuenta</button>
+                                    <button type="submit" class="btn">Actualizar Usuario</button>
                                     <a class="btn btn-danger m-l-10" asp-action="Index">Cancelar</a>
                                 </div>
                             </form>
