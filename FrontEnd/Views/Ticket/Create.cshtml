@@ -1,0 +1,108 @@
+﻿@model FrontEnd.Models.TicketViewModel
+
+@{
+    ViewData["Title"] = "Crear Ticket";
+    Layout = "~/Views/Shared/_Layout.cshtml"; 
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="INSPIRO" />
+    <meta name="description" content="Themeforest Template Polo, html template">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>POLO | The Multi-Purpose HTML5 Template</title>
+    <link href="~/css/plugins.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="body-inner">
+        <section class="fullscreen" data-bg-parallax="/images/pages/BackGround.png">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 offset-lg-2 center p-50 background-white b-r-6">
+                        <h3>Crear Nuevo Ticket</h3>
+                        <form asp-controller="Ticket" asp-action="Create" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <div class="form-group">
+                                <label for="NumeroTicket">Número de Ticket</label>
+                                <input type="text" class="form-control" id="NumeroTicket" name="NumeroTicket" readonly value="TIK-" />
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Nombre" class="control-label">Nombre</label>
+                                <input asp-for="Nombre" class="form-control" />
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Descripcion" class="control-label">Descripción</label>
+                                <textarea asp-for="Descripcion" class="form-control"></textarea>
+                                <span asp-validation-for="Descripcion" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Estado" class="control-label">Estado</label>
+                                <select asp-for="Estado" class="form-control">
+                                    <option value="Abierto">Abierto</option>
+                                    <option value="En Proceso">En Proceso</option>
+                                    <option value="Cerrado">Cerrado</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Complejidad" class="control-label">Complejidad</label>
+                                <select asp-for="Complejidad" class="form-control">
+                                    <option value="Baja">Baja</option>
+                                    <option value="Media">Media</option>
+                                    <option value="Alta">Alta</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Prioridad" class="control-label">Prioridad</label>
+                                <select asp-for="Prioridad" class="form-control">
+                                    <option value="Baja">Baja</option>
+                                    <option value="Media">Media</option>
+                                    <option value="Alta">Alta</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Categoria" class="control-label">Categoría</label>
+                                <select asp-for="Categoria" class="form-control">
+                                    <option value="Soporte">Soporte</option>
+                                    <option value="Desarrollo">Desarrollo</option>
+                                    <option value="Gestión">Gestión</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">Crear Ticket</button>
+                            <a asp-action="ListTicket" class="btn btn-default">Cancelar</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <a id="scrollTop"><i class="icon-chevron-up"></i><i class="icon-chevron-up"></i></a>
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/plugins.js"></script>
+    <script src="~/js/functions.js"></script>
+    <script src="~/plugins/validate/validate.min.js"></script>
+    <script src="~/plugins/validate/validate-rules.js"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function (event) {
+            function generarNumeroAleatorio() {
+                return Math.floor(100000 + Math.random() * 900000);
+            }
+
+            document.getElementById('NumeroTicket').value += generarNumeroAleatorio();
+        });
+    </script>
+</body>
+</html>

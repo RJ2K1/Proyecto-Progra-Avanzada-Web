@@ -28,10 +28,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendApp",
         policyBuilder => policyBuilder
-            .WithOrigins("http://localhost:5120") // Asegúrate de que este es el origen correcto de tu frontend
+            .WithOrigins("http://localhost:5120") 
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials()); // Esto es importante para las cookies de autenticación
+            .AllowCredentials()); 
 });
 
 // Configuración de la cadena de conexión de la base de datos.
@@ -43,8 +43,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.Cookie.Name = "MiCookieDeAutenticacion";
-        options.LoginPath = "/Account/Login"; // Ruta al controlador de inicio de sesión.
-        options.LogoutPath = "/Account/Logout"; // Ruta al controlador de cierre de sesión.
+        options.LoginPath = "/Account/Login"; 
+        options.LogoutPath = "/Account/Logout"; 
     });
 builder.Services.AddHttpContextAccessor();
 #region DI
@@ -85,7 +85,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Asegúrate de llamar a UseCors antes de UseRouting, UseAuthentication y UseAuthorization.
 app.UseCors("AllowFrontendApp");
 
 app.UseRouting();

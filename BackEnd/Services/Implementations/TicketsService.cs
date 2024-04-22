@@ -1,59 +1,78 @@
 ﻿using BackEnd.Models;
 using BackEnd.Services.Interfaces;
+using DAL.Implementations;
 using DAL.Interfaces;
 using Entities.Entities;
-using Microsoft.Identity.Client;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BackEnd.Services.Implementations
 {
     public class TicketsService : ITicketsService
     {
-        private IUnidadDeTrabajo _Unidad;
+        private readonly IUnidadDeTrabajo _unidadDeTrabajo;
 
-        public TicketsService(IUnidadDeTrabajo unidadTrabajo)
+        public TicketsService(IUnidadDeTrabajo unidadDeTrabajo)
         {
-            _Unidad = unidadTrabajo;
+            _unidadDeTrabajo = unidadDeTrabajo;
         }
 
-        public async Task<bool> add(TicketModel ticketModel)
+        public async Task<bool> Add(TicketModel ticketModel)
         {
-           var ticket = Convertir(ticketModel);
-            await _Unidad.TicketsDAL.AddAsync(ticket);
-            var result = _Unidad.Complete();
+            var ticket = new Ticket();
+            Convertir(ticketModel, ticket);
+            await _unidadDeTrabajo.TicketsDAL.AddAsync(ticket);
+            var result = await _unidadDeTrabajo.CompleteAsync();
             return result;
         }
 
-        public async Task<bool> delete(int id)
+        public async Task<bool> Delete(int id)
         {
             var ticket = new Ticket { Id = id };
-            await _Unidad.TicketsDAL.RemoveAsync(ticket);
-            var result= _Unidad.Complete();
+            await _unidadDeTrabajo.TicketsDAL.RemoveAsync(ticket);
+            var result = await _unidadDeTrabajo.CompleteAsync();
             return result;
         }
 
-        public async Task<TicketModel> getById(int id)
+        public async Task<TicketModel> GetById(int id)
         {
-            var ticket = await _Unidad.TicketsDAL.GetAsync(id);
+            var ticket = await _unidadDeTrabajo.TicketsDAL.GetAsync(id);
             return Convertir(ticket);
         }
 
-        public async Task<List<TicketModel>> GetTickts()
+        public async Task<List<TicketModel>> GetTickets()
         {
-            var ticket= await _Unidad.TicketsDAL.GetAllAsync();
-            var List= ticket.Select(Convertir).ToList();
+            var ticket = await _unidadDeTrabajo.TicketsDAL.GetAllAsync();
+            var List = ticket.Select(Convertir).ToList();
             return List;
         }
 
         public async Task<bool> Update(TicketModel ticketModel)
         {
-            var ticket = Convertir(ticketModel);
-            await _Unidad.TicketsDAL.UpdateAsync(ticket);
-            var result= _Unidad.Complete(); 
+            var ticket = await _unidadDeTrabajo.TicketsDAL.GetAsync(ticketModel.Id);
+            if (ticket == null)
+            {
+                return false;
+            }
+            ticket.NumeroTicket = ticketModel.NumeroTicket;
+            ticket.Nombre = ticketModel.Nombre;
+            ticket.Descripcion = ticketModel.Descripcion;
+            ticket.FechaDeCreacion = ticketModel.FechaDeCreacion;
+            ticket.Estado = ticketModel.Estado;
+            ticket.FechaActualizacion = ticketModel.FechaActualizacion;
+            ticket.Complejidad = ticketModel.Complejidad;
+            ticket.Prioridad = ticketModel.Prioridad;
+            ticket.Duracion = ticketModel.Duracion;
+            ticket.Categoria = ticketModel.Categoria;
+            ticket.DepartamentoAsignadoId = ticketModel.DepartamentoAsignadoId;
+            ticket.CreadoPorUsuarioId = ticketModel.CreadoPorUsuarioId;
+            ticket.AsignadoAusuarioId = ticketModel.AsignadoAusuarioId;
+            ticket = Convertir(ticketModel, ticket);
+            await _unidadDeTrabajo.TicketsDAL.UpdateAsync(ticket);
+            var result = await _unidadDeTrabajo.CompleteAsync();
             return result;
         }
-
-
 
         private TicketModel Convertir(Ticket ticket)
         {
@@ -78,26 +97,24 @@ namespace BackEnd.Services.Implementations
             };
         }
 
-        private Ticket Convertir(TicketModel ticketmodel) {
-
-
-            return new Ticket
-            {
-                Id = ticketmodel.Id,
-                NumeroTicket=ticketmodel.NumeroTicket,
-                Nombre=ticketmodel.Nombre,
-                Descripcion=ticketmodel.Descripcion,
-                FechaDeCreacion=ticketmodel.FechaDeCreacion,
-                Estado=ticketmodel.Estado,
-                FechaActualizacion=ticketmodel.FechaActualizacion,
-                Complejidad=ticketmodel.Complejidad,
-                Prioridad=ticketmodel.Prioridad,
-                Duracion=ticketmodel.Duracion,
-                Categoria=ticketmodel.Categoria,
-                DepartamentoAsignadoId=ticketmodel.DepartamentoAsignadoId,
-                CreadoPorUsuarioId=ticketmodel.CreadoPorUsuarioId,
-                AsignadoAusuarioId=ticketmodel.AsignadoAusuarioId
-            };
+        private Ticket Convertir(TicketModel ticketModel, Ticket ticket)
+        {
+            ticket.Id = ticketModel.Id;
+            ticket.NumeroTicket = ticketModel.NumeroTicket;
+            ticket.Nombre = ticketModel.Nombre;
+            ticket.Descripcion = ticketModel.Descripcion;
+            ticket.FechaDeCreacion = ticketModel.FechaDeCreacion;
+            ticket.Estado = ticketModel.Estado;
+            ticket.FechaActualizacion = ticketModel.FechaActualizacion;
+            ticket.Complejidad = ticketModel.Complejidad;
+            ticket.Prioridad = ticketModel.Prioridad;
+            ticket.Duracion = ticketModel.Duracion;
+            ticket.Categoria = ticketModel.Categoria;
+            ticket.DepartamentoAsignadoId = ticketModel.DepartamentoAsignadoId;
+            ticket.CreadoPorUsuarioId = ticketModel.CreadoPorUsuarioId;
+            ticket.AsignadoAusuarioId = ticketModel.AsignadoAusuarioId;
+            return ticket;
         }
+
     }
 }

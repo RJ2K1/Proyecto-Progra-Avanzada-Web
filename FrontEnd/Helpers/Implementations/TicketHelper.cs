@@ -6,69 +6,93 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Helpers.Implementations
 {
     public class TicketHelper : ITicketHelper
     {
-        private readonly IServiceRepository _repository;
-        private const string BaseUrl = "api/ticket"; // Asegúrate de que esta URL es correcta para tu API
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly string _apiBaseUrl;
+        private readonly ILogger<TicketHelper> _logger;
 
-        public TicketHelper(IServiceRepository repository)
+        public TicketHelper(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<TicketHelper> logger)
         {
-            _repository = repository;
+            _httpClientFactory = httpClientFactory;
+            _apiBaseUrl = configuration.GetValue<string>("BackEnd:Url");
+            _logger = logger;
         }
 
         public async Task<List<TicketViewModel>> GetTickets()
         {
-            var response = await _repository.GetResponse(BaseUrl);
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync($"{_apiBaseUrl}api/Tickets");
+
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<List<TicketViewModel>>(content);
+                var tickets = JsonConvert.DeserializeObject<List<TicketViewModel>>(content);
+                return tickets;
             }
-            return new List<TicketViewModel>();
+            else
+            {
+                _logger.LogError($"Error al obtener tickets. Respuesta: {response.StatusCode}");
+                return new List<TicketViewModel>();
+            }
         }
 
         public async Task<TicketViewModel> GetTicket(int id)
         {
-            var response = await _repository.GetResponse($"{BaseUrl}/{id}");
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync($"{_apiBaseUrl}api/Tickets/{id}");
+
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<TicketViewModel>(content);
+                var ticket = JsonConvert.DeserializeObject<TicketViewModel>(content);
+                return ticket;
             }
-            return null;
-        }
-
-        public async Task<TicketViewModel> AddTicket(TicketViewModel ticket)
-        {
-            var json = JsonConvert.SerializeObject(ticket);
-            var response = await _repository.PostResponse(BaseUrl, new StringContent(json, Encoding.UTF8, "application/json"));
-            if (response.IsSuccessStatusCode)
+            else
             {
-                var content = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<TicketViewModel>(content);
+                _logger.LogError($"Error al obtener el ticket con ID {id}. Respuesta: {response.StatusCode}");
+                return null;
             }
-            return null;
         }
 
-        public async Task<bool> DeleteTicket(int id)
+        public async Task AddTicket(TicketViewModel ticketViewModel)
         {
-            var response = await _repository.DeleteResponse($"{BaseUrl}/{id}");
-            return response.IsSuccessStatusCode;
-        }
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonConvert.SerializeObject(ticketViewModel), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_apiBaseUrl}api/Tickets", content);
 
-        public async Task<TicketViewModel> UpdateTicket(TicketViewModel ticket)
-        {
-            var json = JsonConvert.SerializeObject(ticket);
-            var response = await _repository.PutResponse($"{BaseUrl}/{ticket.Id}", new StringContent(json, Encoding.UTF8, "application/json"));
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<TicketViewModel>(content);
+                _logger.LogError($"Error al agregar ticket. Respuesta: {response.StatusCode}");
             }
-            return null;
+        }
+
+        public async Task UpdateTicket(TicketViewModel ticketViewModel)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var content = new StringContent(JsonConvert.SerializeObject(ticketViewModel), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_apiBaseUrl}api/Tickets/{ticketViewModel.Id}", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"Error al actualizar ticket. Respuesta: {response.StatusCode}");
+            }
+        }
+
+        public async Task DeleteTicket(int id)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.DeleteAsync($"{_apiBaseUrl}api/Tickets/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"Error al eliminar ticket con ID {id}. Respuesta: {response.StatusCode}");
+            }
         }
     }
 }

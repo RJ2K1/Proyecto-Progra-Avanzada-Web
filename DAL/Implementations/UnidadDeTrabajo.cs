@@ -40,12 +40,12 @@ namespace DAL.Implementations
             try
             {
                 var changes = await _context.SaveChangesAsync();
-                return changes > 0; // Esto debería devolver 'true' si hay cambios confirmados.
+                return changes > 0; 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Ocurrió un error al guardar los cambios en la base de datos.");
-                return false; // Esto debería devolver 'false' solo si hay una excepción.
+                return false; 
             }
         }
 

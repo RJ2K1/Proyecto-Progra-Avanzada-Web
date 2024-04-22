@@ -8,8 +8,8 @@ namespace FrontEnd.Helpers.Interfaces
     {
         Task<List<TicketViewModel>> GetTickets();
         Task<TicketViewModel> GetTicket(int id);
-        Task<TicketViewModel> AddTicket(TicketViewModel ticket);
-        Task<bool> DeleteTicket(int id);
-        Task<TicketViewModel> UpdateTicket(TicketViewModel ticket);
+        Task AddTicket(TicketViewModel ticket);
+        Task UpdateTicket(TicketViewModel ticket);
+        Task DeleteTicket(int id);
     }
 }

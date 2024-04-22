@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FrontEnd.Models;
 using FrontEnd.Helpers.Interfaces;
+using FrontEnd.Models;
 using System.Threading.Tasks;
 
 namespace FrontEnd.Controllers
@@ -17,7 +17,7 @@ namespace FrontEnd.Controllers
         public async Task<IActionResult> ListTicket()
         {
             var tickets = await _ticketHelper.GetTickets();
-            return View("ListTicket", tickets);
+            return View("ListTicket", tickets); ;
         }
 
         // GET: Ticket
@@ -27,7 +27,6 @@ namespace FrontEnd.Controllers
             return View(tickets);
         }
 
-        // GET: Ticket/Details/5
         public async Task<IActionResult> Details(int id)
         {
             var ticket = await _ticketHelper.GetTicket(id);
@@ -38,30 +37,23 @@ namespace FrontEnd.Controllers
             return View(ticket);
         }
 
-        // GET: Ticket/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Ticket/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TicketViewModel ticketViewModel)
+        public async Task<IActionResult> Create(TicketViewModel ticket)
         {
             if (ModelState.IsValid)
             {
-                var createdTicket = await _ticketHelper.AddTicket(ticketViewModel);
-                if (createdTicket != null)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "Hubo un error al crear el ticket.");
+                await _ticketHelper.AddTicket(ticket);
+                return RedirectToAction(nameof(Index));
             }
-            return View(ticketViewModel);
+            return View(ticket);
         }
 
-        // GET: Ticket/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var ticket = await _ticketHelper.GetTicket(id);
@@ -72,29 +64,23 @@ namespace FrontEnd.Controllers
             return View(ticket);
         }
 
-        // POST: Ticket/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, TicketViewModel ticketViewModel)
+        public async Task<IActionResult> Edit(int id, TicketViewModel ticket)
         {
-            if (id != ticketViewModel.Id)
+            if (id != ticket.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var updatedTicket = await _ticketHelper.UpdateTicket(ticketViewModel);
-                if (updatedTicket != null)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "Hubo un error al actualizar el ticket.");
+                await _ticketHelper.UpdateTicket(ticket);
+                return RedirectToAction(nameof(Index));
             }
-            return View(ticketViewModel);
+            return View(ticket);
         }
 
-        // GET: Ticket/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var ticket = await _ticketHelper.GetTicket(id);
@@ -105,18 +91,12 @@ namespace FrontEnd.Controllers
             return View(ticket);
         }
 
-        // POST: Ticket/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var success = await _ticketHelper.DeleteTicket(id);
-            if (success)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            ModelState.AddModelError("", "Hubo un error al eliminar el ticket.");
-            return View();
+            await _ticketHelper.DeleteTicket(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
