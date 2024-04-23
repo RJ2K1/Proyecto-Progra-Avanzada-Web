@@ -19,6 +19,17 @@ namespace BackEnd.Services.Implementations
 
         public async Task<bool> Add(AuditoriaModel auditoriaModel)
         {
+            // Asegurarse de que el nombre de usuario se establece correctamente
+            if (auditoriaModel.UsuarioId != 0)
+            {
+                var usuario = await _unidadDeTrabajo.UsuariosDAL.GetAsync(auditoriaModel.UsuarioId);
+                auditoriaModel.NombreUsuario = usuario?.Nombre ?? "Usuario desconocido";
+            }
+            else
+            {
+                auditoriaModel.NombreUsuario = "Usuario desconocido";
+            }
+
             var auditoria = ConvertirAEntidad(auditoriaModel);
             await _unidadDeTrabajo.AuditoriaDAL.AddAsync(auditoria);
             return _unidadDeTrabajo.Complete();
@@ -44,6 +55,16 @@ namespace BackEnd.Services.Implementations
 
         public async Task<bool> Update(AuditoriaModel auditoriaModel)
         {
+            if (auditoriaModel.UsuarioId != 0)
+            {
+                var usuario = await _unidadDeTrabajo.UsuariosDAL.GetAsync(auditoriaModel.UsuarioId);
+                auditoriaModel.NombreUsuario = usuario?.Nombre ?? "Usuario desconocido";
+            }
+            else
+            {
+                auditoriaModel.NombreUsuario = "Usuario desconocido";
+            }
+
             var auditoria = ConvertirAEntidad(auditoriaModel);
             await _unidadDeTrabajo.AuditoriaDAL.UpdateAsync(auditoria);
             return _unidadDeTrabajo.Complete();

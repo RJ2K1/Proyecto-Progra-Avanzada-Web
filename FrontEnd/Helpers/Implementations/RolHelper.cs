@@ -15,25 +15,33 @@ namespace FrontEnd.Helpers.Implementations
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _apiBaseUrl;
+        private readonly string _apiKey;
         private readonly ILogger<RolHelper> _logger;
 
         public RolHelper(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<RolHelper> logger)
         {
             _httpClientFactory = httpClientFactory;
             _apiBaseUrl = configuration.GetValue<string>("BackEnd:Url");
+            _apiKey = configuration.GetValue<string>("BackEnd:ApiKey");
             _logger = logger;
+        }
+
+        private HttpClient CreateClient()
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("ApiKey", _apiKey);
+            return client;
         }
 
         public async Task<List<RolViewModel>> GetRoles()
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.GetAsync($"{_apiBaseUrl}api/Roles");
 
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var roles = JsonConvert.DeserializeObject<List<RolViewModel>>(content);
-                return roles;
+                return JsonConvert.DeserializeObject<List<RolViewModel>>(content);
             }
             else
             {
@@ -44,14 +52,13 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task<RolViewModel> GetRol(int id)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.GetAsync($"{_apiBaseUrl}api/Roles/{id}");
 
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var rol = JsonConvert.DeserializeObject<RolViewModel>(content);
-                return rol;
+                return JsonConvert.DeserializeObject<RolViewModel>(content);
             }
             else
             {
@@ -62,7 +69,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task AddRol(RolViewModel rolViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var content = new StringContent(JsonConvert.SerializeObject(rolViewModel), Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{_apiBaseUrl}api/Roles", content);
 
@@ -80,7 +87,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task UpdateRol(RolViewModel rolViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var content = new StringContent(JsonConvert.SerializeObject(rolViewModel), Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"{_apiBaseUrl}api/Roles/{rolViewModel.Id}", content);
 
@@ -98,7 +105,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task DeleteRol(int id)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.DeleteAsync($"{_apiBaseUrl}api/Roles/{id}");
 
             if (response.IsSuccessStatusCode)
@@ -111,25 +118,6 @@ namespace FrontEnd.Helpers.Implementations
                 _logger.LogError($"Error al eliminar el rol con ID {id}: {errorContent}");
                 throw new ApplicationException($"Error al eliminar el rol: {errorContent}");
             }
-        }
-
-        // Métodos privados para convertir entre Rol y RolViewModel, si es necesario.
-        private Rol Convertir(RolViewModel rolViewModel)
-        {
-            return new Rol
-            {
-                Id = rolViewModel.Id,
-                NombreRol = rolViewModel.NombreRol
-            };
-        }
-
-        private RolViewModel Convertir(Rol rol)
-        {
-            return new RolViewModel
-            {
-                Id = rol.Id,
-                NombreRol = rol.NombreRol
-            };
         }
     }
 }

@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Controllers
 {
@@ -15,13 +17,22 @@ namespace FrontEnd.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _apiBaseUrl;
+        private readonly string _apiKey;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<AccountController> logger)
         {
             _httpClientFactory = httpClientFactory;
             _apiBaseUrl = configuration.GetValue<string>("BackEnd:Url");
+            _apiKey = configuration.GetValue<string>("BackEnd:ApiKey");
             _logger = logger;
+        }
+
+        private HttpClient CreateClient()
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("ApiKey", _apiKey);
+            return client;
         }
 
         [HttpGet]
@@ -38,7 +49,7 @@ namespace FrontEnd.Controllers
                 return View(model);
             }
 
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync($"{_apiBaseUrl}api/Authentication/login", content);
@@ -46,9 +57,9 @@ namespace FrontEnd.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
-                var loginResponse = JsonConvert.DeserializeObject<dynamic>(responseContent); 
+                var loginResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
 
-                var userRole = (string)loginResponse.role; 
+                var userRole = (string)loginResponse.role;
 
                 var claims = new List<Claim>
                 {
@@ -74,49 +85,6 @@ namespace FrontEnd.Controllers
             }
 
             return View(model);
-        }
-
-
-
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var client = _httpClientFactory.CreateClient();
-            var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync($"{_apiBaseUrl}api/Authentication/register", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                // El registro fue exitoso, redirige al usuario a la pantalla de inicio de sesión
-                return RedirectToAction("Login");
-            }
-            else
-            {
-                // Algo salió mal durante el registro, muestra el error
-                ModelState.AddModelError(string.Empty, "Ocurrió un error al registrar el usuario.");
-            }
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync("CookieAuthenticationScheme");
-            return RedirectToAction("Login");
         }
     }
 }
