@@ -1,0 +1,73 @@
+﻿@model FrontEnd.Models.TicketViewModel
+
+@{
+    ViewData["Title"] = "Crear Ticket";
+}
+
+<body>
+    <div class="body-inner">
+        <section class="fullscreen" data-bg-parallax="/images/pages/BackGround.png">
+            <div class="container container-fullscreen">
+                <div class="text-middle">
+                    <div class="row">
+                        <div class="col-lg-12 center p-40 background-white b-r-6">
+                            <h3>Crear Nuevo Ticket</h3>
+                            <p>Introduce la información del nuevo ticket.</p>
+                            <form asp-action="Create" asp-controller="Ticket" method="post" class="form-transparent-grey">
+                                <div class="form-group">
+                                    <label for="NumeroTicket">Número de Ticket</label>
+                                    <input type="text" asp-for="NumeroTicket" class="form-control" placeholder="Número de Ticket" />
+                                    <span asp-validation-for="NumeroTicket" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Nombre">Nombre del Ticket</label>
+                                    <input type="text" asp-for="Nombre" class="form-control" placeholder="Nombre del Ticket" />
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Descripcion">Descripción</label>
+                                    <textarea asp-for="Descripcion" class="form-control" placeholder="Descripción del Ticket"></textarea>
+                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Estado">Estado</label>
+                                    <select asp-for="Estado" class="form-control">
+                                        <option value="Nuevo">Nuevo</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Complejidad">Complejidad</label>
+                                    <select asp-for="Complejidad" class="form-control">
+                                        <option value="Baja">Baja</option>
+                                        <option value="Media">Media</option>
+                                        <option value="Alta">Alta</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Prioridad">Prioridad</label>
+                                    <select asp-for="Prioridad" class="form-control">
+                                        <option value="Baja">Baja</option>
+                                        <option value="Media">Media</option>
+                                        <option value="Alta">Alta</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="Categoria">Categoría</label>
+                                    <input type="text" asp-for="Categoria" class="form-control" placeholder="Categoría" />
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="form-group">
+                                    <button type="submit" class="btn">Crear Ticket</button>
+                                    <a class="btn btn-danger m-l-10" asp-controller="Home" asp-action="Index">Cancelar</a>
+                                </div>
+                            </form>
+                            <!-- End: Form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>

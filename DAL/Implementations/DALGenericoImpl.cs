@@ -20,9 +20,11 @@ namespace DAL.Implementations
 
         public async Task<bool> AddAsync(TEntity entity)
         {
-            _Context.Set<TEntity>().Add(entity);
+            await _Context.Set<TEntity>().AddAsync(entity);
+            await _Context.SaveChangesAsync(); 
             return true;
         }
+
 
         public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
