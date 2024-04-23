@@ -26,7 +26,7 @@
                         <nav>
                             <ul>
                                 <!-- HOME: Visible para todos los usuarios -->
-                                <li><a href="/">HOME</a></li>
+                                <li><a href="/">Inicio</a></li>
 
                                 <!-- Dashboard: Solo visible para Soporte y Administrador -->
                                 @if (User.IsInRole("Soporte") || User.IsInRole("Administrador"))
@@ -37,7 +37,7 @@
                                 <!-- Crear Ticket: Visible para todos los usuarios autenticados -->
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <li><a href="/tickets/crear">CREAR TICKET</a></li>
+                                    <li><a asp-controller="Ticket" asp-action="Create">CREAR TICKET</a></li>
                                 }
 
                                 <!-- Mis Tickets: Visible para todos los usuarios autenticados -->

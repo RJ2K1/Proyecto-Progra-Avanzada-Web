@@ -10,9 +10,9 @@ namespace BackEnd.Models
 
         public string Nombre { get; set; } 
 
-        public string Descripcion { get; set; } 
+        public string Descripcion { get; set; }
 
-        public DateTime FechaDeCreacion { get; set; }
+        public DateTime FechaDeCreacion { get; set; } = DateTime.Now;
 
         public string Estado { get; set; } 
 
