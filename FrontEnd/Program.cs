@@ -17,6 +17,7 @@ builder.Services.AddScoped<IUsuarioHelper, UsuarioHelper>();
 builder.Services.AddScoped<ITicketHelper, TicketHelper>();
 builder.Services.AddScoped<IRolHelper, RolHelper>();
 builder.Services.AddScoped<IDepartamentoHelper, DepartamentoHelper>();
+builder.Services.AddScoped<IAuditoriaHelper, AuditoriaHelper>();    
 // Registra otros helpers y servicios según sea necesario.
 // Configuración de autenticación basada en cookies.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

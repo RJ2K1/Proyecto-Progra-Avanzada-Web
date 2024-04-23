@@ -1,11 +1,15 @@
+using BackEnd.Middleware;
 using BackEnd.Services.Implementations;
 using BackEnd.Services.Interfaces;
 using DAL.Implementations;
 using DAL.Interfaces;
 using Entities.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 
@@ -28,23 +32,47 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendApp",
         policyBuilder => policyBuilder
-            .WithOrigins("http://localhost:5120") 
+            .WithOrigins("http://localhost:5120") // Asegúrate de que este es el origen correcto de tu frontend
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .AllowCredentials()); 
+            .AllowCredentials()); // Esto es importante para las cookies de autenticación
 });
 
 // Configuración de la cadena de conexión de la base de datos.
 builder.Services.AddDbContext<ProyectoWebContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionz")));
 
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AuthConnection")));
+
+
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Fide")
+    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddDefaultTokenProviders();
+
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+
+    options.Password.RequiredLength = 5;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+
+});
+
+
+
 // Configuración de autenticación basada en cookies.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.Cookie.Name = "MiCookieDeAutenticacion";
-        options.LoginPath = "/Account/Login"; 
-        options.LogoutPath = "/Account/Logout"; 
+        options.LoginPath = "/Account/Login"; // Ruta al controlador de inicio de sesión.
+        options.LogoutPath = "/Account/Logout"; // Ruta al controlador de cierre de sesión.
     });
 builder.Services.AddHttpContextAccessor();
 #region DI
@@ -71,6 +99,8 @@ builder.Services.AddScoped<IDepartamentosService, DepartamentosService>();
 
 // Authentication
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+
 #endregion
 
 
@@ -85,10 +115,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowFrontendApp");
 
+app.UseMiddleware<ApiKeyManager>();
 app.UseRouting();
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

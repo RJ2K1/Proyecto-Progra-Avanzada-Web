@@ -1,78 +1,96 @@
 ﻿using BackEnd.Models;
 using BackEnd.Services.Interfaces;
-using DAL.Implementations;
 using DAL.Interfaces;
 using Entities.Entities;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
 namespace BackEnd.Services.Implementations
 {
     public class TicketsService : ITicketsService
     {
-        private readonly IUnidadDeTrabajo _unidadDeTrabajo;
+        private readonly IUnidadDeTrabajo _Unidad;
+        private readonly IAuditoriaService _auditoriaService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<TicketsService> _logger;
 
-        public TicketsService(IUnidadDeTrabajo unidadDeTrabajo)
+        public TicketsService(IUnidadDeTrabajo unidadTrabajo, IAuditoriaService auditoriaService, IHttpContextAccessor httpContextAccessor, ILogger<TicketsService> logger)
         {
-            _unidadDeTrabajo = unidadDeTrabajo;
+            _Unidad = unidadTrabajo;
+            _auditoriaService = auditoriaService;
+            _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
-        public async Task<bool> Add(TicketModel ticketModel)
+        public async Task<List<TicketModel>> GetTicketsByUserId(int userId)
         {
-            var ticket = new Ticket();
-            Convertir(ticketModel, ticket);
-            await _unidadDeTrabajo.TicketsDAL.AddAsync(ticket);
-            var result = await _unidadDeTrabajo.CompleteAsync();
+            var tickets = await _Unidad.TicketsDAL.FindAsync(t => t.CreadoPorUsuarioId == userId);
+            return tickets.Select(Convertir).ToList();
+        }
+
+
+        public async Task<bool> add(TicketModel ticketModel)
+        {
+            var ticket = Convertir(ticketModel);
+            await _Unidad.TicketsDAL.AddAsync(ticket);
+            var result = await _Unidad.CompleteAsync();
+            if (result)
+            {
+                RegistrarAuditoria("Creación de Ticket", ticket.Id);
+            }
             return result;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> delete(int id)
         {
-            var ticket = new Ticket { Id = id };
-            await _unidadDeTrabajo.TicketsDAL.RemoveAsync(ticket);
-            var result = await _unidadDeTrabajo.CompleteAsync();
+            var ticket = await _Unidad.TicketsDAL.GetAsync(id);
+            if (ticket == null) return false;
+
+            await _Unidad.TicketsDAL.RemoveAsync(ticket);
+            var result = await _Unidad.CompleteAsync();
+            if (result)
+            {
+                RegistrarAuditoria("Eliminación de Ticket", id);
+            }
             return result;
         }
 
-        public async Task<TicketModel> GetById(int id)
+
+        public async Task<TicketModel> getById(int id)
         {
-            var ticket = await _unidadDeTrabajo.TicketsDAL.GetAsync(id);
+            var ticket = await _Unidad.TicketsDAL.GetAsync(id);
             return Convertir(ticket);
         }
 
-        public async Task<List<TicketModel>> GetTickets()
+        public async Task<List<TicketModel>> GetTickts()
         {
-            var ticket = await _unidadDeTrabajo.TicketsDAL.GetAllAsync();
-            var List = ticket.Select(Convertir).ToList();
+            var ticket= await _Unidad.TicketsDAL.GetAllAsync();
+            var List= ticket.Select(Convertir).ToList();
             return List;
         }
 
+
         public async Task<bool> Update(TicketModel ticketModel)
         {
-            var ticket = await _unidadDeTrabajo.TicketsDAL.GetAsync(ticketModel.Id);
-            if (ticket == null)
+            var ticket = await _Unidad.TicketsDAL.GetAsync(ticketModel.Id);
+            if (ticket == null) return false;
+
+            ticket = Convertir(ticketModel);
+            await _Unidad.TicketsDAL.UpdateAsync(ticket);
+            var result = await _Unidad.CompleteAsync();
+            if (result)
             {
-                return false;
+                RegistrarAuditoria("Actualización de Ticket", ticketModel.Id);
             }
-            ticket.NumeroTicket = ticketModel.NumeroTicket;
-            ticket.Nombre = ticketModel.Nombre;
-            ticket.Descripcion = ticketModel.Descripcion;
-            ticket.FechaDeCreacion = ticketModel.FechaDeCreacion;
-            ticket.Estado = ticketModel.Estado;
-            ticket.FechaActualizacion = ticketModel.FechaActualizacion;
-            ticket.Complejidad = ticketModel.Complejidad;
-            ticket.Prioridad = ticketModel.Prioridad;
-            ticket.Duracion = ticketModel.Duracion;
-            ticket.Categoria = ticketModel.Categoria;
-            ticket.DepartamentoAsignadoId = ticketModel.DepartamentoAsignadoId;
-            ticket.CreadoPorUsuarioId = ticketModel.CreadoPorUsuarioId;
-            ticket.AsignadoAusuarioId = ticketModel.AsignadoAusuarioId;
-            ticket = Convertir(ticketModel, ticket);
-            await _unidadDeTrabajo.TicketsDAL.UpdateAsync(ticket);
-            var result = await _unidadDeTrabajo.CompleteAsync();
             return result;
         }
+
+
 
         private TicketModel Convertir(Ticket ticket)
         {
@@ -97,24 +115,62 @@ namespace BackEnd.Services.Implementations
             };
         }
 
-        private Ticket Convertir(TicketModel ticketModel, Ticket ticket)
+        private Ticket Convertir(TicketModel ticketModel)
         {
-            ticket.Id = ticketModel.Id;
-            ticket.NumeroTicket = ticketModel.NumeroTicket;
-            ticket.Nombre = ticketModel.Nombre;
-            ticket.Descripcion = ticketModel.Descripcion;
-            ticket.FechaDeCreacion = ticketModel.FechaDeCreacion;
-            ticket.Estado = ticketModel.Estado;
-            ticket.FechaActualizacion = ticketModel.FechaActualizacion;
-            ticket.Complejidad = ticketModel.Complejidad;
-            ticket.Prioridad = ticketModel.Prioridad;
-            ticket.Duracion = ticketModel.Duracion;
-            ticket.Categoria = ticketModel.Categoria;
-            ticket.DepartamentoAsignadoId = ticketModel.DepartamentoAsignadoId;
-            ticket.CreadoPorUsuarioId = ticketModel.CreadoPorUsuarioId;
-            ticket.AsignadoAusuarioId = ticketModel.AsignadoAusuarioId;
-            return ticket;
+            int userId = GetCurrentUserId();  // Method to fetch current user's ID from claims.
+
+            return new Ticket
+            {
+                Id = ticketModel.Id,
+                NumeroTicket = ticketModel.NumeroTicket,
+                Nombre = ticketModel.Nombre,
+                Descripcion = ticketModel.Descripcion,
+                FechaDeCreacion = ticketModel.FechaDeCreacion == default(DateTime) ? DateTime.Now : ticketModel.FechaDeCreacion,
+                Estado = ticketModel.Estado,
+                FechaActualizacion = ticketModel.FechaActualizacion ?? DateTime.Now,  // Optionally set to now if null.
+                Complejidad = ticketModel.Complejidad,
+                Prioridad = ticketModel.Prioridad,
+                Duracion = ticketModel.Duracion,
+                Categoria = ticketModel.Categoria,
+                DepartamentoAsignadoId = ticketModel.DepartamentoAsignadoId,
+                CreadoPorUsuarioId = userId,  // Set from claims
+                AsignadoAusuarioId = ticketModel.AsignadoAusuarioId
+            };
         }
+
+        private int GetCurrentUserId()
+        {
+            if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                string userIdValue = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                return int.TryParse(userIdValue, out var userId) ? userId : 0;  // Return 0 or throw exception if needed
+            }
+            _logger.LogWarning("User is not authenticated.");
+            return 0;  // Or handle this scenario as needed.
+        }
+
+        private async void RegistrarAuditoria(string accion, int registroId)
+        {
+            if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                string userIdValue = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                int userId = int.TryParse(userIdValue, out var uid) ? uid : 0; // Handle default or error case as needed
+
+                await _auditoriaService.Add(new AuditoriaModel
+                {
+                    Accion = accion,
+                    FechaAccion = DateTime.UtcNow,
+                    RegistroId = registroId,
+                    TablaAfectada = "Tickets",
+                    UsuarioId = userId
+                });
+            }
+            else
+            {
+                _logger.LogWarning("Intento de registrar auditoría sin usuario autenticado.");
+            }
+        }
+
 
     }
 }

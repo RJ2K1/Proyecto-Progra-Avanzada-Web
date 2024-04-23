@@ -4,6 +4,7 @@ using BackEnd.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BackEnd.Services.Implementations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackEnd.Controllers
 {
@@ -19,6 +20,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
+
         public async Task<ActionResult<IEnumerable<RolesModel>>> GetAll()
         {
             var roles = await _rolesService.GetAllRoles();
@@ -26,6 +28,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet("{id}")]
+
         public async Task<ActionResult<RolesModel>> GetById(int id)
         {
             var rol = await _rolesService.GetById(id);
@@ -34,6 +37,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpPost]
+
         public async Task<IActionResult> Add([FromBody] RolesModel rolModel)
         {
             if (!ModelState.IsValid)
@@ -47,6 +51,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpPut("{id}")]
+
         public async Task<IActionResult> Update(int id, [FromBody] RolesModel rolModel)
         {
             if (id != rolModel.Id) return BadRequest("ID mismatch");
@@ -56,6 +61,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpDelete("{id}")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _rolesService.Delete(id);

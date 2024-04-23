@@ -25,24 +25,32 @@
                         <nav>
                             <ul>
                                 <!-- HOME: Visible para todos los usuarios -->
-                                <li><a href="/">Inicio</a></li>
-
-                                <!-- Dashboard: Solo visible para Soporte y Administrador -->
+                                @if (User.IsInRole("Administrador"))
+                                {
+                                    <li><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+                                }
+                                <!-- Usuario: Solo visible para Soporte y Administrador -->
                                 @if (User.IsInRole("Administrador"))
                                 {
                                     <li><a asp-controller="Usuario" asp-action="Index">Usuarios</a></li>
                                 }
 
-                                <!-- Crear Ticket: Visible para todos los usuarios autenticados -->
+                                <!-- Departamento: Visible para todos los usuarios autenticados -->
                                 @if (User.IsInRole("Administrador"))
                                 {
                                     <li><a asp-controller="Departamento" asp-action="Index">Departamentos</a></li>
                                 }
 
-                                <!-- Mis Tickets: Visible para todos los usuarios autenticados -->
+                                <!-- Rol: Visible para todos los usuarios autenticados -->
                                 @if (User.IsInRole("Administrador"))
                                 {
                                     <li><a asp-controller="Rol" asp-action="Index">Roles</a></li>
+                                }
+
+                                <!-- Auditoria: Visible para todos los usuarios autenticados -->
+                                @if (User.IsInRole("Administrador"))
+                                {
+                                    <li><a asp-controller="Auditoria" asp-action="Index">Auditoria</a></li>
                                 }
 
                                 <!-- Salir: Visible para todos los usuarios autenticados -->

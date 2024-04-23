@@ -1,0 +1,43 @@
+﻿@model List<FrontEnd.ApiModels.Auditoria>
+
+@{
+    ViewData["Title"] = "Lista de Auditorías";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<!-- Page Content -->
+<section id="page-content" class="no-sidebar">
+    <div class="container">
+        <!-- DataTable -->
+        <div class="row mb-5">
+            <div class="col-lg-12">
+                <h4>Registro de Auditorías</h4>
+                <table id="datatable" class="table table-bordered table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Acción</th>
+                            <th>Tabla Afectada</th>
+                            <th>ID de Registro</th>
+                            <th>Usuario</th>
+                            <th>Fecha de Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var auditoria in Model)
+                        {
+                            <tr>
+                                <td>@auditoria.Accion</td>
+                                <td>@auditoria.TablaAfectada</td>
+                                <td>@auditoria.RegistroId</td>
+                                <td>@auditoria.NombreUsuario</td>
+                                <td>@auditoria.FechaAccion.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- end: DataTable -->
+    </div>
+</section>
+<!-- end: Page Content -->

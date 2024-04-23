@@ -15,18 +15,27 @@ namespace FrontEnd.Helpers.Implementations
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _apiBaseUrl;
+        private readonly string _apiKey;
         private readonly ILogger<DepartamentoHelper> _logger;
 
         public DepartamentoHelper(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<DepartamentoHelper> logger)
         {
             _httpClientFactory = httpClientFactory;
             _apiBaseUrl = configuration.GetValue<string>("BackEnd:Url");
+            _apiKey = configuration.GetValue<string>("BackEnd:ApiKey");
             _logger = logger;
+        }
+
+        private HttpClient CreateClient()
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("ApiKey", _apiKey); // Añadir la ApiKey a los headers
+            return client;
         }
 
         public async Task<List<DepartamentoViewModel>> GetDepartamentos()
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.GetAsync($"{_apiBaseUrl}api/Departamentos");
 
             if (response.IsSuccessStatusCode)
@@ -44,7 +53,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task<DepartamentoViewModel> GetDepartamento(int id)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.GetAsync($"{_apiBaseUrl}api/Departamentos/{id}");
 
             if (response.IsSuccessStatusCode)
@@ -62,7 +71,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task AddDepartamento(DepartamentoViewModel departamentoViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var content = new StringContent(JsonConvert.SerializeObject(departamentoViewModel), Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{_apiBaseUrl}api/Departamentos", content);
 
@@ -74,7 +83,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task UpdateDepartamento(DepartamentoViewModel departamentoViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var content = new StringContent(JsonConvert.SerializeObject(departamentoViewModel), Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"{_apiBaseUrl}api/Departamentos/{departamentoViewModel.Id}", content);
 
@@ -86,7 +95,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task DeleteDepartamento(int id)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.DeleteAsync($"{_apiBaseUrl}api/Departamentos/{id}");
 
             if (!response.IsSuccessStatusCode)
