@@ -4,12 +4,12 @@ namespace DAL.Interfaces
     {
         IUsuariosDAL UsuariosDAL { get; }
         IRolesDAL RolesDAL { get; }
-        ITicketsDAL TicketsDAL { get; } // Asegúrate de que el nombre sea correcto
+        ITicketsDAL TicketsDAL { get; }
         IDepartamentosDAL DepartamentosDAL { get; }
         IAuditoriaDAL AuditoriaDAL { get; }
 
-        Task<bool> CompleteAsync(); // Método asincrónico
-        bool Complete(); // Método sincrónico
+        Task<bool> CompleteAsync();
+        bool Complete();
     }
 }
 
