@@ -116,7 +116,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-//app.UseMiddleware<ApiKeyManager>();
+app.UseMiddleware<ApiKeyManager>();
 app.UseRouting();
 app.UseAuthorization();
 

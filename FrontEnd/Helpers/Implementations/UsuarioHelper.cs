@@ -15,18 +15,27 @@ namespace FrontEnd.Helpers.Implementations
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _apiBaseUrl;
+        private readonly string _apiKey;
         private readonly ILogger<UsuarioHelper> _logger;
 
         public UsuarioHelper(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<UsuarioHelper> logger)
         {
             _httpClientFactory = httpClientFactory;
             _apiBaseUrl = configuration.GetValue<string>("BackEnd:Url");
+            _apiKey = configuration.GetValue<string>("BackEnd:ApiKey"); // Obtener la ApiKey del appsettings.json
             _logger = logger;
+        }
+
+        private HttpClient CreateClient()
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("ApiKey", _apiKey); // Añadir la ApiKey a los headers
+            return client;
         }
 
         public async Task<bool> AddUsuario(UsuarioCreateViewModel usuarioCreateViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var content = new StringContent(JsonConvert.SerializeObject(usuarioCreateViewModel), Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{_apiBaseUrl}api/Usuarios", content);
 
@@ -42,11 +51,9 @@ namespace FrontEnd.Helpers.Implementations
             }
         }
 
-
-
         public async Task<bool> DeleteUsuario(int id)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.DeleteAsync($"{_apiBaseUrl}api/Usuarios/{id}");
 
             if (response.IsSuccessStatusCode)
@@ -62,7 +69,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task<List<UsuarioViewModel>> GetUsuarios()
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.GetAsync($"{_apiBaseUrl}api/usuarios");
 
             if (response.IsSuccessStatusCode)
@@ -80,7 +87,7 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task<UsuarioViewModel> GetUsuario(int id)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var response = await client.GetAsync($"{_apiBaseUrl}api/Usuarios/{id}");
 
             if (response.IsSuccessStatusCode)
@@ -98,22 +105,19 @@ namespace FrontEnd.Helpers.Implementations
 
         public async Task<bool> UpdateUsuario(UsuarioUpdateViewModel usuarioUpdateViewModel)
         {
-            var client = _httpClientFactory.CreateClient();
+            var client = CreateClient();
             var content = new StringContent(JsonConvert.SerializeObject(usuarioUpdateViewModel), Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"{_apiBaseUrl}api/Usuarios/{usuarioUpdateViewModel.Id}", content);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
             {
                 _logger.LogError($"Error al actualizar usuario. ID: {usuarioUpdateViewModel.Id}, Respuesta: {response.StatusCode}");
                 return false;
             }
-
-            return true;
         }
-
-
-
-
-
     }
 }
