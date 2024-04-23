@@ -1,25 +1,13 @@
 ﻿@model IEnumerable<FrontEnd.Models.TicketViewModel>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Tickets</title>
-    <link href="~/css/plugins.css" rel="stylesheet">
-    <link href="~/css/style.css" rel="stylesheet">
-    <script src="~/js/jquery.js"></script>
-</head>
+
 <body>
     <section id="page-content">
         <div class="container">
-            <h4>Lista de Tickets</h4>
-            <div class="mb-2">
-                <a href="@Url.Action("Create", "Ticket")" class="btn btn-primary">Crear Nuevo Ticket</a>
-            </div>
-            <div class="line"></div>
             <div class="row">
                 <div class="content col-lg-12">
+                    <h4>Lista de Tickets</h4>
+                    <div class="line"></div>
                     <table class="table table-hover">
                         <thead>
                             <tr>
@@ -29,18 +17,20 @@
                                 <th>Descripción</th>
                                 <th>Fecha de Creación</th>
                                 <th>Estado</th>
+                                <!-- Agrega más encabezados si es necesario -->
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var ticket in Model)
                             {
-                                <tr class="clickable-row" data-href="@Url.Action("Edit", "Ticket", new { id = ticket.Id })">
+                                <tr onclick="location.href='@Url.Action("Details", "Ticket", new { id = ticket.Id })'" style="cursor:pointer;">
                                     <td>@ticket.Id</td>
                                     <td>@ticket.NumeroTicket</td>
                                     <td>@ticket.Nombre</td>
                                     <td>@ticket.Descripcion</td>
                                     <td>@ticket.FechaDeCreacion.ToString("dd/MM/yyyy")</td>
                                     <td>@ticket.Estado</td>
+                                    <!-- Agrega más celdas si es necesario -->
                                 </tr>
                             }
                         </tbody>
@@ -50,17 +40,7 @@
         </div>
     </section>
 
-    <a id="scrollTop" href="#"><i class="icon-chevron-up"></i><i class="icon-chevron-up"></i></a>
-    <script src="~/js/plugins.js"></script>
-    <script src="~/js/functions.js"></script>
+    <a id="scrollTop"><i class="icon-chevron-up"></i><i class="icon-chevron-up"></i></a>
 
-    <script>
-        // jQuery document ready
-        $(function () {
-            $(".clickable-row").click(function () {
-                window.location = $(this).data("href");
-            });
-        });
-    </script>
 </body>
-</html>
+
