@@ -1,6 +1,7 @@
 ﻿using BackEnd.Models;
 using BackEnd.Services.Implementations;
 using BackEnd.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet]
+
         public async Task<ActionResult<IEnumerable<DepartamentosModel>>> Get()
         {
             var result = await _departamentosService.GetDepartamentos();
@@ -26,6 +28,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpGet("{id}")]
+
         public async Task<ActionResult<DepartamentosModel>> Get(int id)
         {
             var result = await _departamentosService.GetById(id);
@@ -37,6 +40,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpPost]
+
         public async Task<ActionResult> Post([FromBody] DepartamentosModel departamento)
         {
             var result = await _departamentosService.Add(departamento);
@@ -51,6 +55,7 @@ namespace BackEnd.Controllers
         }
 
         [HttpPut("{id}")]
+
         public async Task<IActionResult> Update(int id, [FromBody] DepartamentosModel departamentoModel)
         {
             if (id != departamentoModel.Id) return BadRequest("ID mismatch");
@@ -64,6 +69,7 @@ namespace BackEnd.Controllers
 
 
         [HttpDelete("{id}")]
+
         public async Task<ActionResult> Delete(int id)
         {
             var result = await _departamentosService.Delete(id);

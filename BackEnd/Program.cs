@@ -1,11 +1,15 @@
+using BackEnd.Middleware;
 using BackEnd.Services.Implementations;
 using BackEnd.Services.Interfaces;
 using DAL.Implementations;
 using DAL.Interfaces;
 using Entities.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 
@@ -37,6 +41,30 @@ builder.Services.AddCors(options =>
 // Configuración de la cadena de conexión de la base de datos.
 builder.Services.AddDbContext<ProyectoWebContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionz")));
+
+builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AuthConnection")));
+
+
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Fide")
+    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddDefaultTokenProviders();
+
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+
+    options.Password.RequiredLength = 5;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+
+});
+
+
 
 // Configuración de autenticación basada en cookies.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -71,6 +99,8 @@ builder.Services.AddScoped<IDepartamentosService, DepartamentosService>();
 
 // Authentication
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+
 #endregion
 
 
@@ -85,11 +115,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Asegúrate de llamar a UseCors antes de UseRouting, UseAuthentication y UseAuthorization.
-app.UseCors("AllowFrontendApp");
 
+//app.UseMiddleware<ApiKeyManager>();
 app.UseRouting();
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
