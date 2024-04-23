@@ -1,9 +1,9 @@
 ﻿using BackEnd.Models;
 using BackEnd.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace BackEnd.Controllers
 {
@@ -11,83 +11,94 @@ namespace BackEnd.Controllers
     [ApiController]
     public class TicketController : ControllerBase
     {
-        private readonly ITicketsService _ticketsService;
-        private readonly ILogger<TicketController> _logger;
 
-        public TicketController(ITicketsService ticketsService, ILogger<TicketController> logger)
+        private readonly ITicketsService _serviceTicket;
+        public TicketController(ITicketsService serviceTicket)
         {
-            _ticketsService = ticketsService;
-            _logger = logger;
-
+            _serviceTicket = serviceTicket;
         }
 
-        // GET: api/Ticket
+
+        // GET: api/<TicketController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TicketModel>>> Get()
         {
-            var result = await _ticketsService.GetTickets();
-            if (result == null)
-            {
-                return NotFound();
-            }
+            var result = await _serviceTicket.GetTickts();
             return Ok(result);
         }
 
-        // GET: api/Ticket/5
+        // GET api/<TicketController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TicketModel>> Get(int id)
         {
-            var result = await _ticketsService.GetById(id);
+            var result = await _serviceTicket.getById(id);
             if (result == null)
             {
+
                 return NotFound();
             }
             return Ok(result);
+
+
         }
 
-        // POST: api/Ticket
+        // POST api/<TicketController>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] TicketModel ticketModel)
+        public async Task<ActionResult> Post([FromBody] TicketModel ticket)
         {
-            var result = await _ticketsService.Add(ticketModel);
-            if (result == true)
+            var result = await _serviceTicket.add(ticket);
+            if (result) {
+                return Ok();
+            }
+            else { return BadRequest(); 
+            }
+
+        }
+
+        // PUT api/<TicketController>/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put([FromBody] TicketModel ticket)
+        {
+            var result = await _serviceTicket.Update(ticket);
+            if (result)
             {
                 return Ok();
             }
-            else
-            {
+            else {
                 return BadRequest();
             }
         }
 
-        // PUT: api/Ticket/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] TicketModel ticketModel)
-        {
-
-            if (id != ticketModel.Id)
-            {
-                return BadRequest("Ticket ID mismatch");
-            }
-
-            var result = await _ticketsService.Update(ticketModel);
-
-            return Ok();
-        }
-
-        // DELETE: api/Ticket/5
+        // DELETE api/<TicketController>/5
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var result = await _ticketsService.Delete(id);
-            if (result == false)
+            var result = await _serviceTicket.delete(id);
+            if (result)
             {
                 return Ok();
             }
-            else
-            {
-                return BadRequest("Ticket not found or delete failed");
+            else {
+                return BadRequest();
             }
         }
+
+        public class TicketsController : Controller
+        {
+            private readonly ITicketsService _ticketsService;
+
+            public TicketsController(ITicketsService ticketsService)
+            {
+                _ticketsService = ticketsService;
+            }
+
+            // Acción para mostrar la lista de tickets
+            public async Task<IActionResult> List()
+            {
+                var tickets = await _ticketsService.GetTickts();
+                return View(tickets);
+            }
+        }
+
     }
 }
