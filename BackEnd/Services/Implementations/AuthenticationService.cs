@@ -49,11 +49,12 @@ public class AuthenticationService : IAuthenticationService
             _logger.LogInformation("Usuario encontrado, procediendo a crear claims.");
 
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Nombre),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Rol.NombreRol)
-            };
+        {
+            new Claim(ClaimTypes.Name, user.Nombre),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Rol.NombreRol),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+        };
 
             _logger.LogDebug("Claims creadas: {Claims}", claims.Select(c => $"{c.Type}: {c.Value}"));
 
@@ -79,4 +80,5 @@ public class AuthenticationService : IAuthenticationService
         _logger.LogWarning("Credenciales incorrectas para el usuario con email: {Email}", email);
         return (false, null);
     }
+
 }
